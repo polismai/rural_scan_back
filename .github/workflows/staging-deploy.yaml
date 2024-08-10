@@ -12,8 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Print SSH Host
-        run: echo "AWS_HOST: ${{ secrets.AWS_HOST }}"
       - name: executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
         with:
