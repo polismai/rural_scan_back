@@ -18,12 +18,11 @@ sudo yarn build
 echo "Reload PM2 with the new application"
 if [ -f dist/main.js ]; then
   echo "dist/main.js exists, proceeding with PM2 deployment"
-  
+
   sudo pm2 start app.json
   sudo pm2 save
-  sudo pm2 restart all
-  
   sudo pm2 startup
+  #sudo pm2 restart all
 else
   echo "dist/main.js does not exist. Build may have failed."
 fi
