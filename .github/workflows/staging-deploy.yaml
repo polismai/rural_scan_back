@@ -18,4 +18,4 @@ jobs:
           host: ${{ secrets.AWS_HOST }}
           username: ${{ secrets.AWS_USER }}
           key: ${{ secrets.AWS_KEY }}
-          script: sh scripts/deploy.sh
+          script: sh /home/ec2-user/rural_scan_back/scripts/deploy.sh
