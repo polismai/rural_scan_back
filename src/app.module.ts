@@ -4,6 +4,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CompaniesModule } from './companies/companies.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { FieldsModule } from './fields/fields.module';
 
 @Module({
   imports: [
@@ -18,9 +19,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get<string>('DATABASE_USER'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        ssl: {
-          rejectUnauthorized: false,
-        },
+        // ssl: {
+        //   rejectUnauthorized: false,
+        // },
         synchronize: true,
         logging: false,
         autoLoadEntities: true,
@@ -32,6 +33,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     UsersModule,
     AuthModule,
     CompaniesModule,
+    FieldsModule,
   ],
   controllers: [],
   providers: [],

@@ -1,5 +1,13 @@
+import { Field } from 'src/fields/entities/field.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Company {
@@ -12,6 +20,21 @@ export class Company {
   @Column({ default: false })
   active: boolean;
 
+  @CreateDateColumn({
+    type: 'timestamp',
+    name: 'created_at',
+  })
+  createdAt: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    name: 'updated_at',
+  })
+  updatedAt: Date;
+
   @OneToMany(() => User, (user) => user.company)
   users: User[];
+
+  @OneToMany(() => Field, (field) => field.company)
+  fields: Field[];
 }

@@ -1,11 +1,13 @@
-import { Company } from 'src/companies/entities/company.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-
-export enum UserRole {
-  ADMIN = 'admin',
-  USER = 'user',
-  VETERINARIAN = 'veterinarian',
-}
+import { UserRole } from '../../common/enums/role.enum';
+import { Company } from '../../companies/entities/company.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
@@ -15,7 +17,7 @@ export class User {
   @Column({ unique: true, nullable: false })
   username: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, select: false })
   password: string;
 
   @Column({
@@ -27,6 +29,18 @@ export class User {
 
   @Column({ default: false })
   active: boolean;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    name: 'created_at',
+  })
+  createdAt: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    name: 'updated_at',
+  })
+  updatedAt: Date;
 
   @ManyToOne(() => Company, (company) => company.id, {
     eager: true, // para que traiga la compania al hacer un findOne
