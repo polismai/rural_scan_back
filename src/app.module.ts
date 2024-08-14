@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { CompaniesModule } from './companies/companies.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FieldsModule } from './fields/fields.module';
+import { PotrerosModule } from './potreros/potreros.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { FieldsModule } from './fields/fields.module';
     AuthModule,
     CompaniesModule,
     FieldsModule,
+    PotrerosModule,
   ],
   controllers: [],
   providers: [],

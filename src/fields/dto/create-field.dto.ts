@@ -15,5 +15,5 @@ export class CreateFieldDto {
   owner: string;
 
   @IsString()
-  company: string;
+  companyId: string;
 }
