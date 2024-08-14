@@ -43,7 +43,7 @@ export class User {
   updatedAt: Date;
 
   @ManyToOne(() => Company, (company) => company.id, {
-    eager: true, // para que traiga la compania al hacer un findOne
+    eager: true,
   })
   company: Company;
 }

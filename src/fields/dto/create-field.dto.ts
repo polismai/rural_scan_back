@@ -6,6 +6,14 @@ export class CreateFieldDto {
   @IsString()
   name: string;
 
+  @Transform(({ value }) => value.trim())
+  @IsString()
+  location: string;
+
+  @Transform(({ value }) => value.trim())
+  @IsString()
+  owner: string;
+
   @IsString()
   company: string;
 }

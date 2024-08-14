@@ -17,7 +17,7 @@ export class FieldsService {
     private readonly companyRepository: Repository<Company>,
   ) {}
 
-  async create({ name, company }: CreateFieldDto) {
+  async create({ name, location, owner, company }: CreateFieldDto) {
     try {
       const fieldFound: Field = await this.fieldRepository.findOneBy({ name });
       if (fieldFound) {
@@ -35,7 +35,12 @@ export class FieldsService {
           message: 'company not found',
         });
       }
-      return await this.fieldRepository.save({ name, company: companyFound });
+      return await this.fieldRepository.save({
+        name,
+        location,
+        owner,
+        company: companyFound,
+      });
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
