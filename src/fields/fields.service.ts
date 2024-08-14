@@ -17,7 +17,12 @@ export class FieldsService {
     private readonly companyRepository: Repository<Company>,
   ) {}
 
-  async create({ name, location, owner, company }: CreateFieldDto) {
+  async create({
+    name,
+    location,
+    owner,
+    companyId,
+  }: CreateFieldDto): Promise<Field> {
     try {
       const fieldFound: Field = await this.fieldRepository.findOneBy({ name });
       if (fieldFound) {
@@ -27,11 +32,11 @@ export class FieldsService {
         });
       }
       const companyFound = await this.companyRepository.findOneBy({
-        id: company,
+        id: companyId,
       });
       if (!companyFound) {
         throw new ErrorManager({
-          type: 'BAD_REQUEST',
+          type: 'NOT_FOUND',
           message: 'company not found',
         });
       }
@@ -51,7 +56,7 @@ export class FieldsService {
       const fields: Field[] = await this.fieldRepository.find();
       if (fields.length === 0) {
         throw new ErrorManager({
-          type: 'BAD_REQUEST',
+          type: 'NOT_FOUND',
           message: 'fields not found',
         });
       }

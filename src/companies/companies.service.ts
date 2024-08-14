@@ -39,7 +39,7 @@ export class CompaniesService {
       });
       if (companies.length === 0) {
         throw new ErrorManager({
-          type: 'BAD_REQUEST',
+          type: 'NOT_FOUND',
           message: 'companies not found',
         });
       }

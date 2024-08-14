@@ -36,7 +36,7 @@ export class UsersService {
       });
       if (!companyFound) {
         throw new ErrorManager({
-          type: 'BAD_REQUEST',
+          type: 'NOT_FOUND',
           message: 'company not found',
         });
       }
@@ -58,7 +58,7 @@ export class UsersService {
       const user: User = await this.userRepository.findOneBy({ username });
       if (!user) {
         throw new ErrorManager({
-          type: 'BAD_REQUEST',
+          type: 'NOT_FOUND',
           message: 'user not found',
         });
       }
@@ -76,8 +76,8 @@ export class UsersService {
       });
       if (!user) {
         throw new ErrorManager({
-          type: 'BAD_REQUEST',
-          message: 'userr not found',
+          type: 'NOT_FOUND',
+          message: 'user not found',
         });
       }
       return user;
@@ -92,7 +92,7 @@ export class UsersService {
 
       if (users.length === 0) {
         throw new ErrorManager({
-          type: 'BAD_REQUEST',
+          type: 'NOT_FOUND',
           message: 'users not found',
         });
       }
@@ -112,7 +112,7 @@ export class UsersService {
 
       if (!userFound) {
         throw new ErrorManager({
-          type: 'BAD_REQUEST',
+          type: 'NOT_FOUND',
           message: 'user not found',
         });
       }
