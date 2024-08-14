@@ -3,7 +3,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -16,6 +15,12 @@ export class Field {
 
   @Column()
   name: string;
+
+  @Column()
+  location: string;
+
+  @Column()
+  owner: string;
 
   @CreateDateColumn({
     type: 'timestamp',
