@@ -1,33 +1,19 @@
 import {
   Controller,
-  Get,
-  Post,
-  Body,
-  Param,
+  // Post,
+  // Body,
+  // Param,
   // Patch,
   // Param,
   // Delete,
 } from '@nestjs/common';
 import { PotrerosService } from './potreros.service';
-import { CreatePotreroDto } from './dto/create-potrero.dto';
+// import { CreatePotreroDto } from './dto/create-potrero.dto';
 // import { UpdatePotreroDto } from './dto/update-potrero.dto';
 
-@Controller('potreros/:fieldId')
+@Controller('potreros')
 export class PotrerosController {
   constructor(private readonly potrerosService: PotrerosService) {}
-
-  @Post()
-  async create(
-    @Param('fieldId') fieldId: string,
-    @Body() createPotreroDto: CreatePotreroDto,
-  ) {
-    return await this.potrerosService.create(fieldId, createPotreroDto);
-  }
-
-  @Get()
-  async findAll() {
-    return await this.potrerosService.findAll();
-  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {

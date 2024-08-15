@@ -18,26 +18,28 @@ export class UsersService {
     private readonly companyRepository: Repository<Company>,
   ) {}
 
-  async create({ username, password, company, role, active }: CreateUserDto) {
+  async create({ username, password, companyId, role, active }: CreateUserDto) {
     try {
-      const userFound = await this.userRepository.findOneBy({
-        username,
+      const companyFound = await this.companyRepository.findOneBy({
+        id: companyId,
+      });
+
+      if (!companyFound) {
+        throw new ErrorManager({
+          type: 'NOT_FOUND',
+          message: 'company not found',
+        });
+      }
+
+      const userFound = await this.userRepository.findOne({
+        where: { username, company: { id: companyId } },
+        relations: ['company'],
       });
 
       if (userFound) {
         throw new ErrorManager({
           type: 'BAD_REQUEST',
           message: 'user already exists',
-        });
-      }
-
-      const companyFound = await this.companyRepository.findOneBy({
-        id: company,
-      });
-      if (!companyFound) {
-        throw new ErrorManager({
-          type: 'NOT_FOUND',
-          message: 'company not found',
         });
       }
 
