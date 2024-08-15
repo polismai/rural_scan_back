@@ -8,5 +8,6 @@ import { Potrero } from './entities/potrero.entity';
   imports: [TypeOrmModule.forFeature([Potrero])],
   controllers: [PotrerosController],
   providers: [PotrerosService],
+  exports: [PotrerosService],
 })
 export class PotrerosModule {}

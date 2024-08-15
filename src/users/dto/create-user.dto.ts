@@ -13,7 +13,7 @@ export class CreateUserDto {
   password: string;
 
   @IsString()
-  company: string;
+  companyId: string;
 
   @IsEnum(UserRole)
   role: UserRole;

@@ -31,9 +31,12 @@ export class PotrerosService {
     }
   }
 
-  async findAll() {
+  async findPotreros(fieldId: string): Promise<Potrero[]> {
     try {
-      const potreros: Potrero[] = await this.potreroRepository.find();
+      const potreros: Potrero[] = await this.potreroRepository.find({
+        where: { fieldId },
+      });
+
       if (potreros.length === 0) {
         throw new ErrorManager({
           type: 'NOT_FOUND',

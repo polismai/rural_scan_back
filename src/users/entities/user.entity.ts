@@ -14,7 +14,7 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true, nullable: false })
+  @Column({ nullable: false })
   username: string;
 
   @Column({ nullable: false, select: false })
@@ -42,7 +42,7 @@ export class User {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => Company, (company) => company.id, {
+  @ManyToOne(() => Company, (company) => company.users, {
     eager: true,
   })
   company: Company;
