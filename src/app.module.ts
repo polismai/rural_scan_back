@@ -6,6 +6,7 @@ import { CompaniesModule } from './companies/companies.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FieldsModule } from './fields/fields.module';
 import { PotrerosModule } from './potreros/potreros.module';
+import { AnimalsModule } from './animals/animals.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { PotrerosModule } from './potreros/potreros.module';
     CompaniesModule,
     FieldsModule,
     PotrerosModule,
+    AnimalsModule,
   ],
   controllers: [],
   providers: [],
