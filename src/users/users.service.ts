@@ -112,8 +112,8 @@ export class UsersService {
         });
       }
 
-      const updatedUser = Object.assign(userFound, updateUserDto);
-      return this.userRepository.save(updatedUser);
+      const updatedUser = this.userRepository.merge(userFound, updateUserDto);
+      return await this.userRepository.save(updatedUser);
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }

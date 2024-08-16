@@ -1,10 +1,12 @@
-import { Company } from 'src/companies/entities/company.entity';
+import { Animal } from '../../animals/entities/animal.entity';
+import { Company } from '../../companies/entities/company.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -41,4 +43,7 @@ export class Field {
 
   @Column()
   companyId: string;
+
+  @OneToMany(() => Animal, (animal) => animal.field)
+  animals: Animal[];
 }
