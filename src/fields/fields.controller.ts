@@ -15,7 +15,7 @@ export class FieldsController {
   ) {}
 
   @Post()
-  @Auth(UserRole.SUPERADMIN)
+  // @Auth(UserRole.SUPERADMIN)
   async create(@Body() createFieldDto: CreateFieldDto) {
     return await this.fieldsService.create(createFieldDto);
   }

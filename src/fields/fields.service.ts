@@ -24,36 +24,30 @@ export class FieldsService {
     companyId,
   }: CreateFieldDto): Promise<Field> {
     try {
-      const fieldFound: Field = await this.fieldRepository.findOneBy({ name });
+      const fieldFound = await this.fieldRepository.findOneBy({ name });
       if (fieldFound) {
         throw new ErrorManager({
           type: 'BAD_REQUEST',
           message: 'field already exists',
         });
       }
-      const companyFound = await this.companyRepository.findOneBy({
-        id: companyId,
-      });
-      if (!companyFound) {
-        throw new ErrorManager({
-          type: 'NOT_FOUND',
-          message: 'company not found',
-        });
-      }
+
       return await this.fieldRepository.save({
         name,
         location,
         owner,
-        company: companyFound,
+        companyId,
       });
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
   }
 
-  async findAll() {
+  async findAll(): Promise<Field[]> {
     try {
-      const fields: Field[] = await this.fieldRepository.find();
+      const fields = await this.fieldRepository.find({
+        relations: ['company'],
+      });
       if (fields.length === 0) {
         throw new ErrorManager({
           type: 'NOT_FOUND',

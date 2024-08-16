@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -42,8 +43,10 @@ export class User {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => Company, (company) => company.users, {
-    eager: true,
-  })
+  @ManyToOne(() => Company)
+  @JoinColumn({ name: 'companyId', referencedColumnName: 'id' })
   company: Company;
+
+  @Column()
+  companyId: string;
 }

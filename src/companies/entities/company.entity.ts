@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -35,6 +36,6 @@ export class Company {
   @OneToMany(() => User, (user) => user.company)
   users: User[];
 
-  @OneToMany(() => Field, (field) => field.company)
+  @ManyToOne(() => Field, (field) => field.companyId)
   fields: Field[];
 }
