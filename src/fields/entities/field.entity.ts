@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -34,6 +35,10 @@ export class Field {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => Company, (company) => company.id)
+  @ManyToOne(() => Company)
+  @JoinColumn({ name: 'companyId', referencedColumnName: 'id' })
   company: Company;
+
+  @Column()
+  companyId: string;
 }

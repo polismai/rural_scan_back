@@ -20,20 +20,11 @@ export class UsersService {
 
   async create({ username, password, companyId, role, active }: CreateUserDto) {
     try {
-      const companyFound = await this.companyRepository.findOneBy({
-        id: companyId,
-      });
-
-      if (!companyFound) {
-        throw new ErrorManager({
-          type: 'NOT_FOUND',
-          message: 'company not found',
-        });
-      }
-
       const userFound = await this.userRepository.findOne({
-        where: { username, company: { id: companyId } },
-        relations: ['company'],
+        where: {
+          username,
+          companyId,
+        },
       });
 
       if (userFound) {
@@ -46,7 +37,7 @@ export class UsersService {
       return await this.userRepository.save({
         username,
         password: await bcryptjs.hash(password, 10),
-        company: companyFound,
+        companyId,
         role,
         active,
       });
@@ -88,9 +79,11 @@ export class UsersService {
     }
   }
 
-  async findAll() {
+  async findAll(): Promise<User[]> {
     try {
-      const users: User[] = await this.userRepository.find();
+      const users = await this.userRepository.find({
+        relations: ['company'],
+      });
 
       if (users.length === 0) {
         throw new ErrorManager({
