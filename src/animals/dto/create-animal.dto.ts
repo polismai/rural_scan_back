@@ -9,6 +9,7 @@ import { Breed } from '../../common/enums/breed.enum';
 import { Sex } from '../../common/enums/sex.enum';
 import { LifeStatus } from '../../common/enums/lifeStatus.enum';
 import { Traceability } from '../../common/enums/traceability.enum';
+import { Type } from 'class-transformer';
 
 export class CreateAnimalDto {
   @IsNumber()
@@ -40,16 +41,19 @@ export class CreateAnimalDto {
   @IsNumber()
   motherTag: number;
 
-  @IsNumber()
+  @IsString()
   fatherTag: string;
 
   @IsDate()
-  disaappearanceDate: Date;
+  @Type(() => Date)
+  disappearanceDate: Date;
 
   @IsDate()
+  @Type(() => Date)
   inseminationDate: Date;
 
   @IsDate()
+  @Type(() => Date)
   calvingDate: Date;
 
   @IsString()

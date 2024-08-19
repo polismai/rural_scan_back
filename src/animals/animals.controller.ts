@@ -10,8 +10,8 @@ import {
 import { AnimalsService } from './animals.service';
 import { CreateAnimalDto } from './dto/create-animal.dto';
 import { UpdateAnimalDto } from './dto/update-animal.dto';
-// import { Auth } from '../auth/decorators/auth.decorator';
-// import { UserRole } from '../common/enums/role.enum';
+import { Auth } from '../auth/decorators/auth.decorator';
+import { UserRole } from '../common/enums/role.enum';
 import { ActiveUser } from '../common/decorators/active-user.decorator';
 import { UserActiveInterface } from '../common/interfaces/user-active.interface';
 
@@ -35,7 +35,12 @@ export class AnimalsController {
   }
 
   @Patch(':id')
-  // @Auth(UserRole.USER)
+  @Auth([
+    UserRole.ADMIN,
+    UserRole.SUPERADMIN,
+    UserRole.VETERINARIAN,
+    UserRole.USER,
+  ])
   async update(
     @Param('id') id: string,
     @Body() updateAnimalDto: UpdateAnimalDto,

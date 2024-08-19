@@ -54,7 +54,7 @@ export class Animal {
   })
   traceabilityStatus: Traceability;
 
-  @Column()
+  @Column({ nullable: true })
   observations: string;
 
   @Column()

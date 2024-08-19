@@ -21,7 +21,7 @@ export class FieldsController {
   }
 
   @Post(':id/potrero')
-  @Auth(UserRole.ADMIN)
+  @Auth([UserRole.ADMIN])
   async createPotrero(
     @Param('id') fieldId: string,
     @Body() createPotreroDto: CreatePotreroDto,
