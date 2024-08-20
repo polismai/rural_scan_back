@@ -4,10 +4,12 @@ import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { UserActivityModule } from 'src/user-activity/user-activity.module';
 
 @Module({
   imports: [
     UsersModule,
+    UserActivityModule,
     JwtModule.registerAsync({
       useFactory: async () => {
         const configService = new ConfigService();
