@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FieldsModule } from './fields/fields.module';
 import { PotrerosModule } from './potreros/potreros.module';
 import { AnimalsModule } from './animals/animals.module';
+import { UserActivityModule } from './user-activity/user-activity.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AnimalsModule } from './animals/animals.module';
     FieldsModule,
     PotrerosModule,
     AnimalsModule,
+    UserActivityModule,
   ],
   controllers: [],
   providers: [],
