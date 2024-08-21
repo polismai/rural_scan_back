@@ -14,7 +14,7 @@ export class AuthService {
     private readonly userActivityService: UserActivityService,
   ) {}
 
-  async login({ username, password }: LoginDto) {
+  async login({ username, password, rememberMe }: LoginDto) {
     const user = await this.usersService.findByUsernameWithPassword(username);
 
     if (!user) {
@@ -29,9 +29,11 @@ export class AuthService {
 
     const { id, role } = user;
 
+    const tokenOptions = rememberMe ? {} : { expiresIn: '30d' };
+
     const payload = { id, username: user.username, role }; // puedo enviar tmb el id pero como en este caso el username es unico, no es necesario
 
-    const token = await this.jwtService.signAsync(payload);
+    const token = await this.jwtService.signAsync(payload, tokenOptions);
 
     await this.userActivityService.logActivity(id, 'login');
 

@@ -16,7 +16,7 @@ import { UserActivityModule } from 'src/user-activity/user-activity.module';
         return {
           global: true,
           secret: configService.get<string>('JWT_SECRET'),
-          signOptions: { expiresIn: '30d' },
+          signOptions: {},
         };
       },
     }),
