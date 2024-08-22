@@ -9,5 +9,6 @@ import { AuthModule } from 'src/auth/auth.module';
   imports: [TypeOrmModule.forFeature([Animal]), AuthModule],
   controllers: [AnimalsController],
   providers: [AnimalsService],
+  exports: [AnimalsService, TypeOrmModule],
 })
 export class AnimalsModule {}
