@@ -3,7 +3,6 @@ import {
   Get,
   Param,
   // Post,
-  // Body,
   // Patch,
   // Delete,
 } from '@nestjs/common';
@@ -23,8 +22,10 @@ export class PotrerosController {
     return { isEmpty };
   }
 
-  // @Get(':id/lastEntry')
-  //buscar registro en la tabla animal-potrero, si no se encuentra ningun registro, la fecha es null, si se encuentra, devuelve la ultima fecha mas actual de entrydate
+  @Get(':id/lastEntry')
+  async getLastEntryDate(@Param('id') potreroId: string): Promise<Date | null> {
+    return await this.potrerosService.getLastEntryDate(potreroId);
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
