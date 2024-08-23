@@ -1,3 +1,4 @@
+import { IsDateString } from 'class-validator';
 import { Animal } from '../../animals/entities/animal.entity';
 import { Potrero } from '../../potreros/entities/potrero.entity';
 import {
@@ -34,8 +35,9 @@ export class AnimalPotrero {
   @Column({ type: 'date' })
   entryDate: Date;
 
-  @Column({ type: 'date', nullable: true })
-  exitDate: Date | null;
+  @Column({ type: 'date', nullable: true, default: null })
+  @IsDateString()
+  exitDate: Date;
 
   @CreateDateColumn({
     type: 'timestamp',

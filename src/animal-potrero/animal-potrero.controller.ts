@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AnimalPotreroService } from './animal-potrero.service';
 import { MoveAnimalsDto } from './dto/create-animal-potrero.dto';
 
@@ -10,10 +10,5 @@ export class AnimalPotreroController {
   async moveAnimals(@Body() moveAnimalsDto: MoveAnimalsDto) {
     await this.animalPotreroService.moveAnimals(moveAnimalsDto);
     return { message: 'Animals moved successfully' };
-  }
-
-  @Get('movements/:animalId')
-  async getAnimalMovements(@Param('animalId') animalId: string) {
-    return await this.animalPotreroService.getAnimalMovements(animalId);
   }
 }

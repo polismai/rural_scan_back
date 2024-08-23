@@ -27,9 +27,6 @@ export class Potrero {
   })
   forageStatus: ForageStatus;
 
-  @Column({ default: true })
-  isEmpty: boolean;
-
   @Column({ nullable: true })
   observations: string;
 
