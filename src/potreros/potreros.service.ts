@@ -59,6 +59,18 @@ export class PotrerosService {
     return !!!animalsInPotrero;
   }
 
+  async getLastEntryDate(potreroId: string): Promise<Date | null> {
+    const lastEntry = await this.animalPotreroRepository.findOne({
+      where: { potreroId, exitDate: IsNull() },
+      order: { entryDate: 'DESC' }, // Ordenar por fecha de entrada más reciente
+    });
+
+    if (lastEntry) {
+      return lastEntry.entryDate;
+    }
+    return null;
+  }
+
   // findOne(id: number) {
   //   return `This action returns a #${id} potrero`;
   // }
