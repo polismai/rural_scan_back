@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AnimalPotrero } from './entities/animal_potrero.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { MoveAnimalsDto } from './dto/create-animal-potrero.dto';
 // import { Animal } from '../animals/entities/animal.entity';
 // import { Potrero } from '../potreros/entities/potrero.entity';
@@ -20,12 +20,12 @@ export class AnimalPotreroService {
       // Actualizar el registro actual del animal con fecha de egreso
 
       const existingAnimal = await this.animalPotreroRepository.findOne({
-        where: { animalId, exitDate: null },
+        where: { animalId, exitDate: IsNull() },
       });
 
       if (existingAnimal) {
         await this.animalPotreroRepository.update(
-          { animalId },
+          { id: existingAnimal.id },
           { exitDate: entry },
         );
       }
@@ -39,12 +39,5 @@ export class AnimalPotreroService {
 
       await this.animalPotreroRepository.save(newAnimalPotrero);
     }
-  }
-
-  async getAnimalMovements(animalId: string) {
-    return await this.animalPotreroRepository.find({
-      where: { animalId },
-      order: { entryDate: 'ASC' },
-    });
   }
 }

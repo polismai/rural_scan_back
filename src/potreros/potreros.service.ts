@@ -3,14 +3,17 @@ import { CreatePotreroDto } from './dto/create-potrero.dto';
 // import { UpdatePotreroDto } from './dto/update-potrero.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Potrero } from './entities/potrero.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { ErrorManager } from 'src/utils/error.manager';
+import { AnimalPotrero } from 'src/animal-potrero/entities/animal_potrero.entity';
 
 @Injectable()
 export class PotrerosService {
   constructor(
     @InjectRepository(Potrero)
     private readonly potreroRepository: Repository<Potrero>,
+    @InjectRepository(AnimalPotrero)
+    private readonly animalPotreroRepository: Repository<AnimalPotrero>,
   ) {}
 
   async create(
@@ -47,6 +50,13 @@ export class PotrerosService {
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
+  }
+
+  async isPotreroEmpty(potreroId: string): Promise<boolean> {
+    const animalsInPotrero = await this.animalPotreroRepository.count({
+      where: { potreroId, exitDate: IsNull() },
+    });
+    return !!!animalsInPotrero;
   }
 
   // findOne(id: number) {
