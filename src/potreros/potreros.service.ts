@@ -3,7 +3,7 @@ import { CreatePotreroDto } from './dto/create-potrero.dto';
 // import { UpdatePotreroDto } from './dto/update-potrero.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Potrero } from './entities/potrero.entity';
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { ErrorManager } from 'src/utils/error.manager';
 import { AnimalPotrero } from 'src/animal-potrero/entities/animal_potrero.entity';
 
@@ -68,6 +68,31 @@ export class PotrerosService {
     if (lastEntry) {
       return lastEntry.entryDate;
     }
+    return null;
+  }
+
+  async getLastVacancyDate(potreroId: string): Promise<Date | null> {
+    // Primero, verificar si hay algún registro con exitDate = null
+    const activeEntry = await this.animalPotreroRepository.findOne({
+      where: { potreroId, exitDate: IsNull() },
+    });
+
+    if (activeEntry) {
+      // Si existe un registro con exitDate = null, el potrero no está vacío
+      return null;
+    }
+
+    // Si no hay registros con exitDate = null, buscar el último registro con exitDate
+    const lastExitRecord = await this.animalPotreroRepository.findOne({
+      where: { potreroId, exitDate: Not(IsNull()) },
+      order: { exitDate: 'DESC' }, // Ordenar por fecha de salida más reciente
+    });
+
+    if (lastExitRecord) {
+      return lastExitRecord.exitDate;
+    }
+
+    // Si no hay registros de salida, devolver null
     return null;
   }
 

@@ -27,6 +27,13 @@ export class PotrerosController {
     return await this.potrerosService.getLastEntryDate(potreroId);
   }
 
+  @Get(':id/last-vacancy-date')
+  async getLastVacancyDate(
+    @Param('id') potreroId: string,
+  ): Promise<Date | null> {
+    return await this.potrerosService.getLastVacancyDate(potreroId);
+  }
+
   // @Get(':id')
   // findOne(@Param('id') id: string) {
   //   return this.potrerosService.findOne(+id);
