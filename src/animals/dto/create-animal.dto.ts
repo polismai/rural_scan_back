@@ -25,8 +25,10 @@ export class CreateAnimalDto {
   @IsOptional()
   sex?: Sex;
 
-  @IsNumber()
-  age: number;
+  @IsDate()
+  @Type(() => Date)
+  // @Transform(({ value }) => new Date(value))
+  born: Date;
 
   @IsEnum(LifeStatus)
   lifeStatus: LifeStatus;

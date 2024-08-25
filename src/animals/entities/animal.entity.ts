@@ -39,8 +39,8 @@ export class Animal {
   })
   sex: Sex;
 
-  @Column()
-  age: number;
+  @CreateDateColumn()
+  born: Date;
 
   @Column({
     type: 'enum',
