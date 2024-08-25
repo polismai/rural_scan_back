@@ -1,4 +1,4 @@
-import { UserRole } from '../../common/enums/role.enum';
+import { Animal } from '../../animals/entities/animal.entity';
 import { Company } from '../../companies/entities/company.entity';
 import {
   Column,
@@ -6,30 +6,24 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
-export class User {
+export class Field {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false })
-  username: string;
+  @Column()
+  name: string;
 
-  @Column({ nullable: false, select: false })
-  password: string;
+  @Column()
+  location: string;
 
-  @Column({
-    type: 'enum',
-    enum: UserRole,
-    default: UserRole.USER,
-  })
-  role: UserRole;
-
-  @Column({ default: false })
-  active: boolean;
+  @Column()
+  owner: string;
 
   @CreateDateColumn({
     type: 'timestamp',
@@ -49,4 +43,7 @@ export class User {
 
   @Column()
   companyId: string;
+
+  @OneToMany(() => Animal, (animal) => animal.field)
+  animals: Animal[];
 }

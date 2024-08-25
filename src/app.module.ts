@@ -4,6 +4,11 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CompaniesModule } from './companies/companies.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { FieldsModule } from './fields/fields.module';
+import { PotrerosModule } from './potreros/potreros.module';
+import { AnimalsModule } from './animals/animals.module';
+import { UserActivityModule } from './user-activity/user-activity.module';
+import { AnimalPotreroModule } from './animal-potrero/animal-potrero.module';
 
 @Module({
   imports: [
@@ -18,9 +23,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get<string>('DATABASE_USER'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        ssl: {
-          rejectUnauthorized: false,
-        },
+        ssl:
+          configService.get<string>('ENVIRONMENT') === 'development'
+            ? false
+            : {
+                rejectUnauthorized: false,
+              },
         synchronize: true,
         logging: false,
         autoLoadEntities: true,
@@ -32,6 +40,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     UsersModule,
     AuthModule,
     CompaniesModule,
+    FieldsModule,
+    PotrerosModule,
+    AnimalsModule,
+    UserActivityModule,
+    AnimalPotreroModule,
   ],
   controllers: [],
   providers: [],

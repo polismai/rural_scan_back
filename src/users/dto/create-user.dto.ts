@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, MinLength } from 'class-validator';
-import { UserRole } from '../entities/user.entity';
+import { UserRole } from '../../common/enums/role.enum';
 
 export class CreateUserDto {
   @Transform(({ value }) => value.trim())
@@ -13,7 +13,7 @@ export class CreateUserDto {
   password: string;
 
   @IsString()
-  company: string;
+  companyId: string;
 
   @IsEnum(UserRole)
   role: UserRole;
