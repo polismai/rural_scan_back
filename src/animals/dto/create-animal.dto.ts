@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
 } from 'class-validator';
 import { Breed } from '../../common/enums/breed.enum';
 import { Sex } from '../../common/enums/sex.enum';
@@ -52,6 +53,6 @@ export class CreateAnimalDto {
   @IsDateString()
   calvingDate: string;
 
-  @IsString()
+  @IsUUID()
   fieldId: string;
 }

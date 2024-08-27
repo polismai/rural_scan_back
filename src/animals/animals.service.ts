@@ -5,13 +5,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Animal } from './entities/animal.entity';
 import { Repository } from 'typeorm';
 import { ErrorManager } from '../utils/error.manager';
-import { UserRole } from 'src/common/enums/role.enum';
+import { UserRole } from '../common/enums/role.enum';
+import { GetAnimalsFilterDto } from './dto/filtered-animal.dto';
 
 @Injectable()
 export class AnimalsService {
   constructor(
     @InjectRepository(Animal)
-    private readonly animalRepository: Repository<Animal>,
+    private animalRepository: Repository<Animal>,
   ) {}
 
   async create(createAnimalDto: CreateAnimalDto): Promise<Animal> {
@@ -31,22 +32,66 @@ export class AnimalsService {
     }
   }
 
-  async findAll(): Promise<Animal[]> {
+  async getAnimals(
+    filterDto: GetAnimalsFilterDto,
+  ): Promise<{ data: Animal[]; total: number }> {
+    const { breed, potreroId, sex, page = 1, limit = 10 } = filterDto;
+
     try {
-      const animals = await this.animalRepository.find({
-        relations: ['field'],
-      });
+      const query = this.animalRepository
+        .createQueryBuilder('animal')
+        .leftJoinAndSelect('animal.field', 'field');
+
+      if (breed) {
+        query.andWhere('animal.breed = :breed', { breed });
+      }
+
+      if (potreroId) {
+        query.andWhere('animal.potreroId = :potreroId', { potreroId });
+      }
+
+      // if (age) {
+      //   query.andWhere('animal.age = :age', { age });
+      // }
+
+      if (sex) {
+        query.andWhere('animal.sex = :sex', { sex });
+      }
+
+      // Paginación
+      const total = await query.getCount();
+      query.skip((page - 1) * limit).take(limit);
+
+      const animals = await query.getMany();
+
       if (animals.length === 0) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: 'animals not found',
+          message: 'No animals found with the specified criteria',
         });
       }
-      return animals;
+      return { data: animals, total };
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
   }
+
+  // async findAll(): Promise<Animal[]> {
+  //   try {
+  //     const animals = await this.animalRepository.find({
+  //       relations: ['field'],
+  //     });
+  //     if (animals.length === 0) {
+  //       throw new ErrorManager({
+  //         type: 'NOT_FOUND',
+  //         message: 'animals not found',
+  //       });
+  //     }
+  //     return animals;
+  //   } catch (error) {
+  //     throw ErrorManager.createSignatureError(error.message);
+  //   }
+  // }
 
   findOne(id: number) {
     return `This action returns a #${id} animal`;
