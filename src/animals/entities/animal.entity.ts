@@ -39,8 +39,8 @@ export class Animal {
   })
   sex: Sex;
 
-  @CreateDateColumn()
-  born: Date;
+  @Column()
+  born: string;
 
   @Column({
     type: 'enum',
@@ -63,14 +63,14 @@ export class Animal {
   @Column()
   fatherTag: string;
 
-  @CreateDateColumn()
-  disappearanceDate: Date;
+  @Column()
+  disappearanceDate: string;
 
-  @CreateDateColumn()
-  inseminationDate: Date;
+  @Column()
+  inseminationDate: string;
 
-  @CreateDateColumn()
-  calvingDate: Date;
+  @Column()
+  calvingDate: string;
 
   @CreateDateColumn({
     type: 'timestamp',

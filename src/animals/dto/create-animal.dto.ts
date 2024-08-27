@@ -1,5 +1,5 @@
 import {
-  IsDate,
+  IsDateString,
   IsEnum,
   IsNumber,
   IsOptional,
@@ -9,7 +9,6 @@ import { Breed } from '../../common/enums/breed.enum';
 import { Sex } from '../../common/enums/sex.enum';
 import { LifeStatus } from '../../common/enums/lifeStatus.enum';
 import { Traceability } from '../../common/enums/traceability.enum';
-import { Type } from 'class-transformer';
 
 export class CreateAnimalDto {
   @IsNumber()
@@ -25,10 +24,8 @@ export class CreateAnimalDto {
   @IsOptional()
   sex?: Sex;
 
-  @IsDate()
-  @Type(() => Date)
-  // @Transform(({ value }) => new Date(value))
-  born: Date;
+  @IsDateString()
+  born: string;
 
   @IsEnum(LifeStatus)
   lifeStatus: LifeStatus;
@@ -46,17 +43,14 @@ export class CreateAnimalDto {
   @IsString()
   fatherTag: string;
 
-  @IsDate()
-  @Type(() => Date)
-  disappearanceDate: Date;
+  @IsDateString()
+  disappearanceDate: string;
 
-  @IsDate()
-  @Type(() => Date)
-  inseminationDate: Date;
+  @IsDateString()
+  inseminationDate: string;
 
-  @IsDate()
-  @Type(() => Date)
-  calvingDate: Date;
+  @IsDateString()
+  calvingDate: string;
 
   @IsString()
   fieldId: string;
