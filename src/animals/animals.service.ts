@@ -21,7 +21,7 @@ export class AnimalsService {
       });
       if (animalFound) {
         throw new ErrorManager({
-          type: 'BAD_REQUEST',
+          type: 'CONFLICT',
           message: 'animal already exists',
         });
       }

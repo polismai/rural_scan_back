@@ -6,6 +6,7 @@ import { Field } from './entities/field.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { CompaniesModule } from 'src/companies/companies.module';
 import { PotrerosModule } from 'src/potreros/potreros.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { PotrerosModule } from 'src/potreros/potreros.module';
     PotrerosModule,
   ],
   controllers: [FieldsController],
-  providers: [FieldsService],
+  providers: [FieldsService, JwtService],
 })
 export class FieldsModule {}

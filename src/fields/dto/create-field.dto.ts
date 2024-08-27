@@ -2,16 +2,16 @@ import { Transform } from 'class-transformer';
 import { IsString } from 'class-validator';
 
 export class CreateFieldDto {
-  @Transform(({ value }) => value.trim())
   @IsString()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   name: string;
 
-  @Transform(({ value }) => value.trim())
   @IsString()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   location: string;
 
-  @Transform(({ value }) => value.trim())
   @IsString()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   owner: string;
 
   @IsString()

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { AnimalsService } from './animals.service';
 import { CreateAnimalDto } from './dto/create-animal.dto';
@@ -42,7 +43,7 @@ export class AnimalsController {
     UserRole.USER,
   ])
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAnimalDto: UpdateAnimalDto,
     @ActiveUser() user: UserActiveInterface,
   ) {
@@ -50,7 +51,7 @@ export class AnimalsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.animalsService.remove(id);
   }
 }

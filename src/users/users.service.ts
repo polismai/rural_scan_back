@@ -18,7 +18,13 @@ export class UsersService {
     private readonly companyRepository: Repository<Company>,
   ) {}
 
-  async create({ username, password, companyId, role, active }: CreateUserDto) {
+  async createUser({
+    username,
+    password,
+    companyId,
+    role,
+    active,
+  }: CreateUserDto) {
     try {
       const userFound = await this.userRepository.findOne({
         where: {
@@ -29,7 +35,7 @@ export class UsersService {
 
       if (userFound) {
         throw new ErrorManager({
-          type: 'BAD_REQUEST',
+          type: 'CONFLICT',
           message: 'user already exists',
         });
       }
@@ -97,8 +103,8 @@ export class UsersService {
     }
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} user`;
+  async getUserById(id: string) {
+    return await this.userRepository.findOne({ where: { id } });
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {

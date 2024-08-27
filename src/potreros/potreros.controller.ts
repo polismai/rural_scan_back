@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseUUIDPipe,
   // Post,
   // Patch,
   // Delete,
@@ -16,20 +17,22 @@ export class PotrerosController {
 
   @Get(':id/isEmpty')
   async isPotreroEmpty(
-    @Param('id') potreroId: string,
+    @Param('id', ParseUUIDPipe) potreroId: string,
   ): Promise<{ isEmpty: boolean }> {
     const isEmpty = await this.potrerosService.isPotreroEmpty(potreroId);
     return { isEmpty };
   }
 
   @Get(':id/lastEntry')
-  async getLastEntryDate(@Param('id') potreroId: string): Promise<Date | null> {
+  async getLastEntryDate(
+    @Param('id', ParseUUIDPipe) potreroId: string,
+  ): Promise<Date | null> {
     return await this.potrerosService.getLastEntryDate(potreroId);
   }
 
   @Get(':id/last-vacancy-date')
   async getLastVacancyDate(
-    @Param('id') potreroId: string,
+    @Param('id', ParseUUIDPipe) potreroId: string,
   ): Promise<Date | null> {
     return await this.potrerosService.getLastVacancyDate(potreroId);
   }
