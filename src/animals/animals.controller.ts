@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { AnimalsService } from './animals.service';
 import { CreateAnimalDto } from './dto/create-animal.dto';
@@ -17,6 +18,7 @@ import { UserRole } from '../common/enums/role.enum';
 import { ActiveUser } from '../common/decorators/active-user.decorator';
 import { UserActiveInterface } from '../common/interfaces/user-active.interface';
 import { GetAnimalsFilterDto } from './dto/filtered-animal.dto';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
 
 @Controller('animals')
 export class AnimalsController {
@@ -28,8 +30,12 @@ export class AnimalsController {
   }
 
   @Get()
-  getAnimals(@Query() filterDto: GetAnimalsFilterDto) {
-    return this.animalsService.getAnimals(filterDto);
+  @UseGuards(AuthGuard)
+  getAnimals(
+    @Query() filterDto: GetAnimalsFilterDto,
+    @ActiveUser() user: UserActiveInterface,
+  ) {
+    return this.animalsService.getAnimals(filterDto, user);
   }
 
   // @Get()
