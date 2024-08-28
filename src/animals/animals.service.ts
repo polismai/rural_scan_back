@@ -7,9 +7,11 @@ import { Repository } from 'typeorm';
 import { ErrorManager } from '../utils/error.manager';
 import { UserRole } from '../common/enums/role.enum';
 import { GetAnimalsFilterDto } from './dto/filtered-animal.dto';
+import { UserActiveInterface } from 'src/common/interfaces/user-active.interface';
 
 @Injectable()
 export class AnimalsService {
+  usersService: any;
   constructor(
     @InjectRepository(Animal)
     private animalRepository: Repository<Animal>,
@@ -34,13 +36,16 @@ export class AnimalsService {
 
   async getAnimals(
     filterDto: GetAnimalsFilterDto,
+    user: UserActiveInterface,
   ): Promise<{ data: Animal[]; total: number }> {
     const { breed, potreroId, sex, age, page = 1, limit = 10 } = filterDto;
 
     try {
       const query = this.animalRepository
         .createQueryBuilder('animal')
-        .leftJoinAndSelect('animal.field', 'field');
+        .leftJoinAndSelect('animal.field', 'field')
+        .leftJoinAndSelect('field.company', 'company')
+        .where('company.id = :companyId', { companyId: user.companyId });
 
       if (breed) {
         query.andWhere('animal.breed = :breed', { breed });
@@ -51,16 +56,19 @@ export class AnimalsService {
       }
 
       if (age) {
-        const currentYear = new Date().getFullYear();
-        const ageDate = currentYear - age;
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
 
-        console.log(ageDate);
-        query.andWhere(
-          "EXTRACT(YEAR FROM TO_DATE(animal.born, 'YYYY-MM-DD')) = :ageDate",
-          {
-            ageDate,
-          },
-        );
+        // Calculate the date range for animals of the specified age
+        const startYear = currentYear - age;
+        const startDate = new Date(startYear, currentMonth, 1); // First day of the month
+        const endDate = new Date(startYear + 1, currentMonth, 0); // Last day of the previous month
+
+        query.andWhere('animal.born BETWEEN :startDate AND :endDate', {
+          startDate: startDate.toISOString().split('T')[0],
+          endDate: endDate.toISOString().split('T')[0],
+        });
       }
 
       if (sex) {

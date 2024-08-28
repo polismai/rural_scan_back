@@ -27,11 +27,11 @@ export class AuthService {
       throw new UnauthorizedException('invalid password');
     }
 
-    const { id, role } = user;
+    const { id, role, companyId } = user;
 
     const tokenOptions = rememberMe ? {} : { expiresIn: '30d' };
 
-    const payload = { sub: id, id, username: user.username, role }; // puedo enviar tmb el id pero como en este caso el username es unico, no es necesario
+    const payload = { sub: id, id, username: user.username, role, companyId };
 
     const token = await this.jwtService.signAsync(payload, tokenOptions);
 

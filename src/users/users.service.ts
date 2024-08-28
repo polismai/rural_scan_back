@@ -4,18 +4,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { Company } from 'src/companies/entities/company.entity';
 import * as bcryptjs from 'bcryptjs';
-import { ErrorManager } from 'src/utils/error.manager';
+import { ErrorManager } from '../utils/error.manager';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
-    @InjectRepository(Company)
-    private readonly companyRepository: Repository<Company>,
   ) {}
 
   async createUser({
@@ -71,7 +67,7 @@ export class UsersService {
     try {
       const user = await this.userRepository.findOne({
         where: { username },
-        select: ['id', 'username', 'password', 'role'],
+        select: ['id', 'username', 'password', 'role', 'companyId'],
       });
       if (!user) {
         throw new ErrorManager({
