@@ -12,6 +12,10 @@ export class GetAnimalsFilterDto {
   @IsUUID()
   potreroId?: string;
 
+  @IsOptional()
+  @IsUUID()
+  fieldId?: string;
+
   @Transform(({ value }) => parseInt(value, 10))
   @IsOptional()
   @IsInt()
