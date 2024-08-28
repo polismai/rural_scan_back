@@ -35,7 +35,7 @@ export class AnimalsService {
   async getAnimals(
     filterDto: GetAnimalsFilterDto,
   ): Promise<{ data: Animal[]; total: number }> {
-    const { breed, potreroId, sex, page = 1, limit = 10 } = filterDto;
+    const { breed, potreroId, sex, age, page = 1, limit = 10 } = filterDto;
 
     try {
       const query = this.animalRepository
@@ -50,9 +50,18 @@ export class AnimalsService {
         query.andWhere('animal.potreroId = :potreroId', { potreroId });
       }
 
-      // if (age) {
-      //   query.andWhere('animal.age = :age', { age });
-      // }
+      if (age) {
+        const currentYear = new Date().getFullYear();
+        const ageDate = currentYear - age;
+
+        console.log(ageDate);
+        query.andWhere(
+          "EXTRACT(YEAR FROM TO_DATE(animal.born, 'YYYY-MM-DD')) = :ageDate",
+          {
+            ageDate,
+          },
+        );
+      }
 
       if (sex) {
         query.andWhere('animal.sex = :sex', { sex });

@@ -1,6 +1,7 @@
-import { IsEnum, IsInt, IsOptional, IsUUID } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsUUID, Min } from 'class-validator';
 import { Breed } from '../../common/enums/breed.enum';
 import { Sex } from '../../common/enums/sex.enum';
+import { Transform } from 'class-transformer';
 
 export class GetAnimalsFilterDto {
   @IsOptional()
@@ -11,9 +12,11 @@ export class GetAnimalsFilterDto {
   @IsUUID()
   potreroId?: string;
 
-  // @IsOptional()
-  // @IsInt()
-  // age?: number;
+  @Transform(({ value }) => parseInt(value, 10))
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  age?: number;
 
   @IsEnum(Sex)
   @IsOptional()
