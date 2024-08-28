@@ -41,7 +41,7 @@ export class Field {
   @JoinColumn({ name: 'companyId', referencedColumnName: 'id' })
   company: Company;
 
-  @Column()
+  @Column({ type: 'uuid' })
   companyId: string;
 
   @OneToMany(() => Animal, (animal) => animal.field)

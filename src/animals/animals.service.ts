@@ -38,7 +38,15 @@ export class AnimalsService {
     filterDto: GetAnimalsFilterDto,
     user: UserActiveInterface,
   ): Promise<{ data: Animal[]; total: number }> {
-    const { breed, potreroId, sex, age, page = 1, limit = 10 } = filterDto;
+    const {
+      breed,
+      potreroId,
+      fieldId,
+      sex,
+      age,
+      page = 1,
+      limit = 10,
+    } = filterDto;
 
     try {
       const query = this.animalRepository
@@ -53,6 +61,10 @@ export class AnimalsService {
 
       if (potreroId) {
         query.andWhere('animal.potreroId = :potreroId', { potreroId });
+      }
+
+      if (fieldId) {
+        query.andWhere('field.id = :fieldId', { fieldId });
       }
 
       if (age) {
