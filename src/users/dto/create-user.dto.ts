@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsString,
+  IsUUID,
   MinLength,
 } from 'class-validator';
 import { UserRole } from '../../common/enums/role.enum';
@@ -20,8 +21,8 @@ export class CreateUserDto {
   @MinLength(6)
   password: string;
 
-  @IsString()
-  companyId: string;
+  @IsUUID()
+  fieldId: string;
 
   @IsEnum(UserRole)
   role: UserRole;

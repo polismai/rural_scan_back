@@ -1,5 +1,5 @@
 import { Field } from 'src/fields/entities/field.entity';
-import { User } from 'src/users/entities/user.entity';
+// import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -32,8 +32,8 @@ export class Company {
   })
   updatedAt: Date;
 
-  @OneToMany(() => User, (user) => user.company)
-  users: User[];
+  // @OneToMany(() => User, (user) => user.company)
+  // users: User[];
 
   @OneToMany(() => Field, (field) => field.company)
   fields: Field[];

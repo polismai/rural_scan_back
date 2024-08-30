@@ -15,6 +15,9 @@ export class Potrero {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column()
+  name: string;
+
   @Column('float')
   totalHectares: number;
 

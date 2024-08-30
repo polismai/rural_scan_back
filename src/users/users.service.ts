@@ -17,7 +17,7 @@ export class UsersService {
   async createUser({
     username,
     password,
-    companyId,
+    fieldId,
     role,
     active,
   }: CreateUserDto) {
@@ -25,7 +25,7 @@ export class UsersService {
       const userFound = await this.userRepository.findOne({
         where: {
           username,
-          companyId,
+          fieldId,
         },
       });
 
@@ -39,7 +39,7 @@ export class UsersService {
       return await this.userRepository.save({
         username,
         password: await bcryptjs.hash(password, 10),
-        companyId,
+        fieldId,
         role,
         active,
       });
@@ -67,7 +67,7 @@ export class UsersService {
     try {
       const user = await this.userRepository.findOne({
         where: { username },
-        select: ['id', 'username', 'password', 'role', 'companyId'],
+        select: ['id', 'username', 'password', 'role', 'fieldId'],
       });
       if (!user) {
         throw new ErrorManager({

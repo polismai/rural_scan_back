@@ -5,6 +5,8 @@ import * as bcryptjs from 'bcryptjs';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UserActiveInterface } from 'src/common/interfaces/user-active.interface';
+import { ConfigService } from '@nestjs/config';
+import { UserRole } from 'src/common/enums/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -12,9 +14,19 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly userActivityService: UserActivityService,
+    private readonly configService: ConfigService,
   ) {}
 
   async login({ username, password, rememberMe }: LoginDto) {
+    if (
+      username === this.configService.get<string>('SUPERADMIN_USERNAME') &&
+      password === this.configService.get<string>('SUPERADMIN_PASSWORD')
+    ) {
+      const payload = { role: UserRole.SUPERADMIN };
+      const token = await this.jwtService.signAsync(payload, {});
+      return { token };
+    }
+
     const user = await this.usersService.findByUsernameWithPassword(username);
 
     if (!user) {
@@ -27,11 +39,11 @@ export class AuthService {
       throw new UnauthorizedException('invalid password');
     }
 
-    const { id, role, companyId } = user;
+    const { id, role, fieldId } = user;
 
     const tokenOptions = rememberMe ? {} : { expiresIn: '30d' };
 
-    const payload = { sub: id, id, username: user.username, role, companyId };
+    const payload = { sub: id, id, username: user.username, role, fieldId };
 
     const token = await this.jwtService.signAsync(payload, tokenOptions);
 

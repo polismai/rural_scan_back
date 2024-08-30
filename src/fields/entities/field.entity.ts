@@ -1,3 +1,4 @@
+import { User } from 'src/users/entities/user.entity';
 import { Animal } from '../../animals/entities/animal.entity';
 import { Company } from '../../companies/entities/company.entity';
 import {
@@ -43,6 +44,9 @@ export class Field {
 
   @Column({ type: 'uuid' })
   companyId: string;
+
+  @OneToMany(() => User, (user) => user.field)
+  users: User[];
 
   @OneToMany(() => Animal, (animal) => animal.field)
   animals: Animal[];
