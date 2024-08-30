@@ -1,19 +1,10 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  // Patch,
-  // Param,
-  // Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
-// import { UpdateCompanyDto } from './dto/update-company.dto';
-// import { Auth } from 'src/auth/decorators/auth.decorator';
-// import { UserRole } from 'src/common/enums/role.enum';
+import { UserRole } from 'src/common/enums/role.enum';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
-// @Auth(UserRole.ADMIN)
+@Auth([UserRole.SUPERADMIN])
 @Controller('companies')
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}

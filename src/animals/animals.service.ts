@@ -7,17 +7,18 @@ import { Repository } from 'typeorm';
 import { ErrorManager } from '../utils/error.manager';
 import { UserRole } from '../common/enums/role.enum';
 import { GetAnimalsFilterDto } from './dto/filtered-animal.dto';
-import { UserActiveInterface } from 'src/common/interfaces/user-active.interface';
 
 @Injectable()
 export class AnimalsService {
-  usersService: any;
   constructor(
     @InjectRepository(Animal)
     private animalRepository: Repository<Animal>,
   ) {}
 
-  async create(createAnimalDto: CreateAnimalDto): Promise<Animal> {
+  async create(
+    createAnimalDto: CreateAnimalDto,
+    fieldId: string,
+  ): Promise<Animal> {
     try {
       const animalFound = await this.animalRepository.findOneBy({
         tag: createAnimalDto.tag,
@@ -28,7 +29,13 @@ export class AnimalsService {
           message: 'animal already exists',
         });
       }
-      return await this.animalRepository.save(createAnimalDto);
+
+      const newAnimal = this.animalRepository.create({
+        ...createAnimalDto,
+        fieldId,
+      });
+
+      return await this.animalRepository.save(newAnimal);
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
@@ -36,24 +43,15 @@ export class AnimalsService {
 
   async getAnimals(
     filterDto: GetAnimalsFilterDto,
-    user: UserActiveInterface,
+    fieldId: string,
   ): Promise<{ data: Animal[]; total: number }> {
-    const {
-      breed,
-      potreroId,
-      fieldId,
-      sex,
-      age,
-      page = 1,
-      limit = 10,
-    } = filterDto;
+    const { breed, potreroId, sex, age, page = 1, limit = 10 } = filterDto;
 
     try {
       const query = this.animalRepository
         .createQueryBuilder('animal')
         .leftJoinAndSelect('animal.field', 'field')
-        .leftJoinAndSelect('field.company', 'company')
-        .where('company.id = :companyId', { companyId: user.companyId });
+        .where({ fieldId });
 
       if (breed) {
         query.andWhere('animal.breed = :breed', { breed });
@@ -61,10 +59,6 @@ export class AnimalsService {
 
       if (potreroId) {
         query.andWhere('animal.potreroId = :potreroId', { potreroId });
-      }
-
-      if (fieldId) {
-        query.andWhere('field.id = :fieldId', { fieldId });
       }
 
       if (age) {
@@ -105,26 +99,15 @@ export class AnimalsService {
     }
   }
 
-  // async findAll(): Promise<Animal[]> {
-  //   try {
-  //     const animals = await this.animalRepository.find({
-  //       relations: ['field'],
-  //     });
-  //     if (animals.length === 0) {
-  //       throw new ErrorManager({
-  //         type: 'NOT_FOUND',
-  //         message: 'animals not found',
-  //       });
-  //     }
-  //     return animals;
-  //   } catch (error) {
-  //     throw ErrorManager.createSignatureError(error.message);
-  //   }
-  // }
-
-  findOne(id: number) {
-    return `This action returns a #${id} animal`;
+  async findAnimalsByFieldId(fieldId: string): Promise<Animal[]> {
+    return await this.animalRepository.find({
+      where: { fieldId },
+    });
   }
+
+  // findOne(id: number) {
+  //   return `This action returns a #${id} animal`;
+  // }
 
   async update(
     id: string,
@@ -132,19 +115,25 @@ export class AnimalsService {
     user,
   ): Promise<Animal> {
     try {
-      const animalFound = await this.animalRepository.findOneBy({ id });
+      const animalFound = await this.animalRepository.findOne({
+        where: { id, fieldId: user.fieldId },
+      });
+
       if (!animalFound) {
         throw new ErrorManager({
-          type: 'NOT_FOUND',
-          message: 'animal not found',
+          type: 'FORBIDDEN',
+          message:
+            'Animal not found or you do not have permission to update it',
         });
       }
+
       if (updateAnimalDto.lifeStatus && user.role !== UserRole.ADMIN) {
         throw new ErrorManager({
           type: 'FORBIDDEN',
           message: 'You do not have permission to update lifeStatus',
         });
       }
+
       const updatedAnimal = this.animalRepository.merge(
         animalFound,
         updateAnimalDto,
@@ -155,7 +144,23 @@ export class AnimalsService {
     }
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} animal`;
+  async remove(id: string, fieldId: string) {
+    try {
+      const animal = await this.animalRepository.findOne({
+        where: { id, fieldId },
+      });
+
+      if (!animal) {
+        throw new ErrorManager({
+          type: 'NOT_FOUND',
+          message:
+            'Animal not found or you do not have permission to delete it',
+        });
+      }
+
+      await this.animalRepository.remove(animal);
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
   }
 }

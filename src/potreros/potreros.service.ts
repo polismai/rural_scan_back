@@ -17,8 +17,8 @@ export class PotrerosService {
   ) {}
 
   async create(
-    fieldId: string,
     createPotreroDto: CreatePotreroDto,
+    fieldId: string,
   ): Promise<Potrero> {
     try {
       const potrero = this.potreroRepository.create({
@@ -52,29 +52,53 @@ export class PotrerosService {
     }
   }
 
-  async isPotreroEmpty(potreroId: string): Promise<boolean> {
+  async isPotreroEmpty(potreroId: string, fieldId: string): Promise<boolean> {
     const animalsInPotrero = await this.animalPotreroRepository.count({
-      where: { potreroId, exitDate: IsNull() },
+      where: {
+        potreroId,
+        exitDate: IsNull(),
+        potrero: {
+          fieldId,
+        },
+      },
+      relations: ['potrero'],
     });
     return !!!animalsInPotrero;
   }
 
-  async getLastEntryDate(potreroId: string): Promise<Date | null> {
+  async getLastEntryDate(
+    potreroId: string,
+    fieldId: string,
+  ): Promise<{ result: Date | null }> {
     const lastEntry = await this.animalPotreroRepository.findOne({
-      where: { potreroId, exitDate: IsNull() },
+      where: {
+        potreroId,
+        exitDate: IsNull(),
+        potrero: {
+          fieldId,
+        },
+      },
+      relations: ['potrero'],
       order: { entryDate: 'DESC' }, // Ordenar por fecha de entrada más reciente
     });
 
-    if (lastEntry) {
-      return lastEntry.entryDate;
-    }
-    return null;
+    return { result: lastEntry.entryDate ?? null };
   }
 
-  async getLastVacancyDate(potreroId: string): Promise<Date | null> {
+  async getLastVacancyDate(
+    potreroId: string,
+    fieldId: string,
+  ): Promise<{ result: Date | null }> {
     // Primero, verificar si hay algún registro con exitDate = null
     const activeEntry = await this.animalPotreroRepository.findOne({
-      where: { potreroId, exitDate: IsNull() },
+      where: {
+        potreroId,
+        exitDate: IsNull(),
+        potrero: {
+          fieldId,
+        },
+      },
+      relations: ['potrero'],
     });
 
     if (activeEntry) {
@@ -84,16 +108,19 @@ export class PotrerosService {
 
     // Si no hay registros con exitDate = null, buscar el último registro con exitDate
     const lastExitRecord = await this.animalPotreroRepository.findOne({
-      where: { potreroId, exitDate: Not(IsNull()) },
+      where: {
+        potreroId,
+        exitDate: Not(IsNull()),
+        potrero: {
+          fieldId,
+        },
+      },
+      relations: ['potrero'],
       order: { exitDate: 'DESC' }, // Ordenar por fecha de salida más reciente
     });
 
-    if (lastExitRecord) {
-      return lastExitRecord.exitDate;
-    }
-
     // Si no hay registros de salida, devolver null
-    return null;
+    return { result: lastExitRecord ? lastExitRecord.exitDate : null };
   }
 
   // findOne(id: number) {
