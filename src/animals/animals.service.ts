@@ -105,9 +105,24 @@ export class AnimalsService {
     });
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} animal`;
-  // }
+  async findOne(id: string, fieldId: string): Promise<Animal> {
+    try {
+      const animal = await this.animalRepository.findOne({
+        where: { id, fieldId },
+      });
+
+      if (!animal) {
+        throw new ErrorManager({
+          type: 'FORBIDDEN',
+          message:
+            'Animal not found or you do not have permission to update it',
+        });
+      }
+      return animal;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
 
   async update(
     id: string,

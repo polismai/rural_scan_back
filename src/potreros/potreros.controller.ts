@@ -57,6 +57,14 @@ export class PotrerosController {
     return await this.potrerosService.findPotreros(fieldId);
   }
 
+  @Get(':id')
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @FieldId() fieldId: string,
+  ) {
+    return await this.potrerosService.findOne(id, fieldId);
+  }
+
   @Post()
   @Auth([UserRole.ADMIN])
   async createPotrero(
@@ -65,11 +73,6 @@ export class PotrerosController {
   ) {
     return await this.potrerosService.create(createPotreroDto, fieldId);
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.potrerosService.findOne(+id);
-  // }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updatePotreroDto: UpdatePotreroDto) {
