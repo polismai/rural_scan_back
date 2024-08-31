@@ -6,43 +6,50 @@ import {
   Patch,
   Param,
   Delete,
+  ParseUUIDPipe,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import { AnimalsService } from './animals.service';
 import { CreateAnimalDto } from './dto/create-animal.dto';
 import { UpdateAnimalDto } from './dto/update-animal.dto';
-import { Auth } from '../auth/decorators/auth.decorator';
-import { UserRole } from '../common/enums/role.enum';
 import { ActiveUser } from '../common/decorators/active-user.decorator';
 import { UserActiveInterface } from '../common/interfaces/user-active.interface';
+import { GetAnimalsFilterDto } from './dto/filtered-animal.dto';
+import { AuthGuard } from '../auth/guard/auth.guard';
+import { FieldId } from '../auth/decorators/fieldId.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/common/enums/role.enum';
 
+@UseGuards(AuthGuard)
 @Controller('animals')
 export class AnimalsController {
   constructor(private readonly animalsService: AnimalsService) {}
 
   @Post()
-  async create(@Body() createAnimalDto: CreateAnimalDto) {
-    return await this.animalsService.create(createAnimalDto);
+  async create(
+    @Body() createAnimalDto: CreateAnimalDto,
+    @FieldId() fieldId: string,
+  ) {
+    return await this.animalsService.create(createAnimalDto, fieldId);
   }
 
   @Get()
-  async findAll() {
-    return await this.animalsService.findAll();
+  getAnimals(
+    @Query() filterDto: GetAnimalsFilterDto,
+    @FieldId() fieldId: string,
+  ) {
+    return this.animalsService.getAnimals(filterDto, fieldId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.animalsService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string, @FieldId() fieldId: string) {
+    return this.animalsService.findOne(id, fieldId);
   }
 
   @Patch(':id')
-  @Auth([
-    UserRole.ADMIN,
-    UserRole.SUPERADMIN,
-    UserRole.VETERINARIAN,
-    UserRole.USER,
-  ])
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAnimalDto: UpdateAnimalDto,
     @ActiveUser() user: UserActiveInterface,
   ) {
@@ -50,7 +57,12 @@ export class AnimalsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.animalsService.remove(id);
+  @Roles(UserRole.ADMIN)
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @FieldId() fieldId: string,
+  ) {
+    await this.animalsService.remove(id, fieldId);
+    return { message: 'Animal successfully deleted' };
   }
 }

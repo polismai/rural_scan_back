@@ -27,7 +27,7 @@ export class FieldsService {
       const fieldFound = await this.fieldRepository.findOneBy({ name });
       if (fieldFound) {
         throw new ErrorManager({
-          type: 'BAD_REQUEST',
+          type: 'CONFLICT',
           message: 'field already exists',
         });
       }

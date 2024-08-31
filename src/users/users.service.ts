@@ -4,32 +4,34 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { Company } from 'src/companies/entities/company.entity';
 import * as bcryptjs from 'bcryptjs';
-import { ErrorManager } from 'src/utils/error.manager';
+import { ErrorManager } from '../utils/error.manager';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
-    @InjectRepository(Company)
-    private readonly companyRepository: Repository<Company>,
   ) {}
 
-  async create({ username, password, companyId, role, active }: CreateUserDto) {
+  async createUser({
+    username,
+    password,
+    fieldId,
+    role,
+    active,
+  }: CreateUserDto) {
     try {
       const userFound = await this.userRepository.findOne({
         where: {
           username,
-          companyId,
+          fieldId,
         },
       });
 
       if (userFound) {
         throw new ErrorManager({
-          type: 'BAD_REQUEST',
+          type: 'CONFLICT',
           message: 'user already exists',
         });
       }
@@ -37,7 +39,7 @@ export class UsersService {
       return await this.userRepository.save({
         username,
         password: await bcryptjs.hash(password, 10),
-        companyId,
+        fieldId,
         role,
         active,
       });
@@ -65,7 +67,7 @@ export class UsersService {
     try {
       const user = await this.userRepository.findOne({
         where: { username },
-        select: ['id', 'username', 'password', 'role'],
+        select: ['id', 'username', 'password', 'role', 'fieldId'],
       });
       if (!user) {
         throw new ErrorManager({
@@ -97,8 +99,8 @@ export class UsersService {
     }
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} user`;
+  async getUserById(id: string) {
+    return await this.userRepository.findOne({ where: { id } });
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {

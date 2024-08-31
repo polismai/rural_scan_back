@@ -20,7 +20,7 @@ export class CompaniesService {
       });
       if (companyFound) {
         throw new ErrorManager({
-          type: 'BAD_REQUEST',
+          type: 'CONFLICT',
           message: `the company ${name} already exists`,
         });
       }

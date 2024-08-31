@@ -1,5 +1,6 @@
+import { Field } from '../../fields/entities/field.entity';
 import { UserRole } from '../../common/enums/role.enum';
-import { Company } from '../../companies/entities/company.entity';
+// import { Company } from '../../companies/entities/company.entity';
 import {
   Column,
   CreateDateColumn,
@@ -43,10 +44,10 @@ export class User {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => Company)
-  @JoinColumn({ name: 'companyId', referencedColumnName: 'id' })
-  company: Company;
+  @ManyToOne(() => Field)
+  @JoinColumn({ name: 'fieldId', referencedColumnName: 'id' })
+  field: Field;
 
-  @Column()
-  companyId: string;
+  @Column({ type: 'uuid' })
+  fieldId: string;
 }

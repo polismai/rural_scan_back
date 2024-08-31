@@ -19,16 +19,18 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Bearer token not found');
     }
 
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.configService.get<string>('JWT_SECRET'),
       });
+      // payload.iat = new Date(payload.iat * 1000);
+      // payload.exp = new Date(payload.exp * 1000);
       request.user = payload;
     } catch (error) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('invalid token');
     }
     // Aquí puedes implementar tu lógica de autenticación o autorización.
     // Por ejemplo, verificar si el usuario está autenticado, si tiene los roles adecuados, etc.

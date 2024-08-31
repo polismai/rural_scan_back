@@ -9,33 +9,35 @@ import { PotrerosModule } from './potreros/potreros.module';
 import { AnimalsModule } from './animals/animals.module';
 import { UserActivityModule } from './user-activity/user-activity.module';
 import { AnimalPotreroModule } from './animal-potrero/animal-potrero.module';
+import typeOrmConfig from './config/typeorm';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [typeOrmConfig],
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: async (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('DATABASE_HOST'),
-        port: configService.get<number>('DATABASE_PORT'),
-        username: configService.get<string>('DATABASE_USER'),
-        password: configService.get<string>('DATABASE_PASSWORD'),
-        database: configService.get<string>('DATABASE_NAME'),
-        ssl:
-          configService.get<string>('ENVIRONMENT') === 'development'
-            ? false
-            : {
-                rejectUnauthorized: false,
-              },
-        synchronize: true,
-        logging: false,
-        autoLoadEntities: true,
-        retryDelay: 3000,
-        retryAttempts: 10,
-      }),
       inject: [ConfigService],
+      useFactory: async (configService: ConfigService) =>
+        configService.get('typeorm'),
+      //   type: 'postgres',
+      //   host: configService.get<string>('DATABASE_HOST'),
+      //   port: configService.get<number>('DATABASE_PORT'),
+      //   username: configService.get<string>('DATABASE_USER'),
+      //   password: configService.get<string>('DATABASE_PASSWORD'),
+      //   database: configService.get<string>('DATABASE_NAME'),
+      //   ssl:
+      //     configService.get<string>('ENVIRONMENT') === 'development'
+      //       ? false
+      //       : {
+      //           rejectUnauthorized: false,
+      //         },
+      //   synchronize: true,
+      //   logging: false,
+      //   autoLoadEntities: true,
+      //   retryDelay: 3000,
+      //   retryAttempts: 10,
     }),
     UsersModule,
     AuthModule,
@@ -48,5 +50,6 @@ import { AnimalPotreroModule } from './animal-potrero/animal-potrero.module';
   ],
   controllers: [],
   providers: [],
+  exports: [],
 })
 export class AppModule {}
