@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { ErrorManager } from '../utils/error.manager';
 import { UserRole } from '../common/enums/role.enum';
 import { GetAnimalsFilterDto } from './dto/filtered-animal.dto';
+import { AnimalPotrero } from 'src/animal-potrero/entities/animal_potrero.entity';
 
 @Injectable()
 export class AnimalsService {
@@ -51,6 +52,16 @@ export class AnimalsService {
       const query = this.animalRepository
         .createQueryBuilder('animal')
         .leftJoinAndSelect('animal.field', 'field')
+        .leftJoinAndSelect(
+          (subQuery) =>
+            subQuery
+              .select('animalPotrero')
+              .from(AnimalPotrero, 'animalPotrero')
+              .where('animalPotrero.exitDate IS NULL')
+              .andWhere('animalPotrero.animalId = animal.id'),
+          'currentPotrero',
+        )
+        .leftJoinAndSelect('currentPotrero.potrero', 'potrero')
         .where({ fieldId });
 
       if (breed) {
@@ -109,6 +120,7 @@ export class AnimalsService {
     try {
       const animal = await this.animalRepository.findOne({
         where: { id, fieldId },
+        relations: ['field', 'potrero'],
       });
 
       if (!animal) {

@@ -6,12 +6,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { LifeStatus } from '../../common/enums/lifeStatus.enum';
 import { Traceability } from '../../common/enums/traceability.enum';
 import { Field } from 'src/fields/entities/field.entity';
+import { AnimalPotrero } from 'src/animal-potrero/entities/animal_potrero.entity';
 
 @Entity()
 export class Animal {
@@ -90,4 +92,7 @@ export class Animal {
 
   @Column()
   fieldId: string;
+
+  @OneToMany(() => AnimalPotrero, (animalPotrero) => animalPotrero.animal)
+  potrero: AnimalPotrero[];
 }
