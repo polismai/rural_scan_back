@@ -123,9 +123,24 @@ export class PotrerosService {
     return { result: lastExitRecord ? lastExitRecord.exitDate : null };
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} potrero`;
-  // }
+  async findOne(id: string, fieldId: string): Promise<Potrero> {
+    try {
+      const potrero = await this.potreroRepository.findOne({
+        where: { id, fieldId },
+      });
+
+      if (!potrero) {
+        throw new ErrorManager({
+          type: 'FORBIDDEN',
+          message:
+            'Potrero not found or you do not have permission to update it',
+        });
+      }
+      return potrero;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
 
   // update(id: number, updatePotreroDto: UpdatePotreroDto) {
   //   return `This action updates a #${id} potrero`;

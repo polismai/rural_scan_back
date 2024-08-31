@@ -42,10 +42,10 @@ export class AnimalsController {
     return this.animalsService.getAnimals(filterDto, fieldId);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.animalsService.findOne(+id);
-  // }
+  @Get(':id')
+  findOne(@Param('id', ParseUUIDPipe) id: string, @FieldId() fieldId: string) {
+    return this.animalsService.findOne(id, fieldId);
+  }
 
   @Patch(':id')
   async update(
