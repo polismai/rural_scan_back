@@ -15,7 +15,8 @@ import { Auth } from '../auth/decorators/auth.decorator';
 import { UserRole } from '../common/enums/role.enum';
 import { CreatePotreroDto } from './dto/create-potrero.dto';
 import { AuthGuard } from '../auth/guard/auth.guard';
-import { FieldId } from 'src/auth/decorators/fieldId.decorator';
+import { FieldId } from '../auth/decorators/fieldId.decorator';
+import { Potrero } from './entities/potrero.entity';
 // import { CreatePotreroDto } from './dto/create-potrero.dto';
 // import { UpdatePotreroDto } from './dto/update-potrero.dto';
 
@@ -53,15 +54,15 @@ export class PotrerosController {
   }
 
   @Get()
-  async getPotreros(@FieldId() fieldId: string) {
-    return await this.potrerosService.findPotreros(fieldId);
+  async getPotreros(@FieldId() fieldId: string): Promise<Potrero[]> {
+    return await this.potrerosService.getPotreros(fieldId);
   }
 
   @Get(':id')
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
     @FieldId() fieldId: string,
-  ) {
+  ): Promise<Potrero> {
     return await this.potrerosService.findOne(id, fieldId);
   }
 

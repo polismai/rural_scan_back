@@ -99,8 +99,20 @@ export class UsersService {
     }
   }
 
-  async getUserById(id: string) {
-    return await this.userRepository.findOne({ where: { id } });
+  async getUserById(id: string): Promise<User> {
+    try {
+      const user = await this.userRepository.findOneBy({ id });
+      if (user) {
+        return user;
+      } else {
+        throw new ErrorManager({
+          type: 'NOT_FOUND',
+          message: 'user not found',
+        });
+      }
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {

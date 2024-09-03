@@ -13,8 +13,8 @@ export class FieldsController {
     private readonly potrerosService: PotrerosService,
   ) {}
 
-  @Post()
   @Auth([UserRole.SUPERADMIN])
+  @Post()
   async create(@Body() createFieldDto: CreateFieldDto) {
     return await this.fieldsService.create(createFieldDto);
   }

@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreatePotreroDto } from './dto/create-potrero.dto';
 // import { UpdatePotreroDto } from './dto/update-potrero.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -21,32 +21,54 @@ export class PotrerosService {
     fieldId: string,
   ): Promise<Potrero> {
     try {
+      const potreroFound = await this.potreroRepository.findOne({
+        where: { name: createPotreroDto.name, fieldId },
+      });
+
+      if (potreroFound) {
+        throw new ErrorManager({
+          type: 'CONFLICT',
+          message: 'potrero already exists',
+        });
+      }
+
       const potrero = this.potreroRepository.create({
         ...createPotreroDto,
         fieldId,
       });
       return await this.potreroRepository.save(potrero);
     } catch (error) {
-      throw new InternalServerErrorException(
-        'failed to create potrero',
-        error.message,
-      );
+      throw ErrorManager.createSignatureError(error.message);
     }
   }
 
-  async findPotreros(fieldId: string): Promise<Potrero[]> {
+  async getPotreros(fieldId: string): Promise<Potrero[]> {
     try {
-      const potreros: Potrero[] = await this.potreroRepository.find({
-        where: { fieldId },
-      });
+      const query = this.potreroRepository
+        .createQueryBuilder('potrero')
+        .leftJoin(
+          'potrero.animalPotreros',
+          'animalPotreros',
+          'animalPotreros.exitDate IS NULL',
+        )
+        .leftJoin('animalPotreros.animal', 'animal')
+        .addSelect('COUNT(animal.id)', 'animalCount')
+        .where('potrero.fieldId = :fieldId', { fieldId })
+        .groupBy('potrero.id');
 
-      if (potreros.length === 0) {
+      const result = await query.getRawAndEntities();
+
+      if (!result.entities.length) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
           message: 'potreros not found',
         });
       }
-      return potreros;
+
+      return result.entities.map((potrero, index) => ({
+        ...potrero,
+        animalCount: Number(result.raw[index].animalCount),
+      }));
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
@@ -123,20 +145,31 @@ export class PotrerosService {
     return { result: lastExitRecord ? lastExitRecord.exitDate : null };
   }
 
-  async findOne(id: string, fieldId: string): Promise<Potrero> {
+  async findOne(id: string, fieldId: string) {
     try {
-      const potrero = await this.potreroRepository.findOne({
-        where: { id, fieldId },
-      });
+      const potrero = await this.potreroRepository
+        .createQueryBuilder('potrero')
+        .leftJoin('potrero.animalPotreros', 'animalPotreros')
+        .leftJoin('animalPotreros.animal', 'animal')
+        .addSelect('COUNT(animal.id)', 'animalCount')
+        .where('potrero.id = :id', { id })
+        .andWhere('potrero.fieldId = :fieldId', { fieldId })
+        .andWhere('animalPotreros.exitDate IS NULL')
+        .groupBy('potrero.id')
+        .getRawAndEntities();
 
-      if (!potrero) {
+      if (potrero.raw.length === 0) {
         throw new ErrorManager({
           type: 'FORBIDDEN',
           message:
-            'Potrero not found or you do not have permission to update it',
+            'Potrero not found or you do not have permission to access it',
         });
       }
-      return potrero;
+
+      return {
+        ...potrero.entities[0],
+        animalCount: Number(potrero.raw[0].animalCount),
+      };
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }

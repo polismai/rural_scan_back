@@ -10,6 +10,6 @@ import { JwtService } from '@nestjs/jwt';
   imports: [TypeOrmModule.forFeature([Potrero, AnimalPotrero])],
   controllers: [PotrerosController],
   providers: [PotrerosService, JwtService],
-  exports: [PotrerosService],
+  exports: [PotrerosService, TypeOrmModule],
 })
 export class PotrerosModule {}
