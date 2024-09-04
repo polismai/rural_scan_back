@@ -14,7 +14,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRole } from '../common/enums/role.enum';
 import { Auth } from '../auth/decorators/auth.decorator';
 import { User } from './entities/user.entity';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Users')
 @Auth([UserRole.SUPERADMIN])
 @Controller('users')
 export class UsersController {

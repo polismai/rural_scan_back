@@ -17,9 +17,11 @@ import { CreatePotreroDto } from './dto/create-potrero.dto';
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { FieldId } from '../auth/decorators/fieldId.decorator';
 import { Potrero } from './entities/potrero.entity';
+import { ApiTags } from '@nestjs/swagger';
 // import { CreatePotreroDto } from './dto/create-potrero.dto';
 // import { UpdatePotreroDto } from './dto/update-potrero.dto';
 
+@ApiTags('Potreros')
 @UseGuards(AuthGuard)
 @Controller('potrero')
 export class PotrerosController {
