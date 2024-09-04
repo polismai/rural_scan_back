@@ -20,7 +20,9 @@ import { AuthGuard } from '../auth/guard/auth.guard';
 import { FieldId } from '../auth/decorators/fieldId.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/common/enums/role.enum';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Animals')
 @UseGuards(AuthGuard)
 @Controller('animals')
 export class AnimalsController {

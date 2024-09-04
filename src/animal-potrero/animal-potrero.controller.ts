@@ -4,7 +4,9 @@ import { MoveAnimalsDto } from './dto/create-animal-potrero.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { UserRole } from 'src/common/enums/role.enum';
 import { FieldId } from 'src/auth/decorators/fieldId.decorator';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('animalPotrero')
 @Controller('animal-potrero')
 export class AnimalPotreroController {
   constructor(private readonly animalPotreroService: AnimalPotreroService) {}

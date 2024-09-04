@@ -3,7 +3,9 @@ import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UserRole } from 'src/common/enums/role.enum';
 import { Auth } from 'src/auth/decorators/auth.decorator';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Companies')
 @Auth([UserRole.SUPERADMIN])
 @Controller('companies')
 export class CompaniesController {

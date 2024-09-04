@@ -4,8 +4,10 @@ import { CreateFieldDto } from './dto/create-field.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { UserRole } from 'src/common/enums/role.enum';
 import { PotrerosService } from 'src/potreros/potreros.service';
+import { ApiTags } from '@nestjs/swagger';
 // import { UpdateFieldDto } from './dto/update-field.dto';
 
+@ApiTags('Fields')
 @Controller('fields')
 export class FieldsController {
   constructor(
