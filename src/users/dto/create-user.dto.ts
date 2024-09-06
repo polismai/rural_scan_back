@@ -35,6 +35,7 @@ export class CreateUserDto {
     description: 'El fieldId debe ser de tipo UUID',
   })
   @IsUUID()
+  @IsNotEmpty()
   fieldId: string;
 
   @ApiProperty({
@@ -42,6 +43,7 @@ export class CreateUserDto {
     description: 'El role debe ser: SUPERADMIN, ADMIN, USER, VETERINARIAN',
   })
   @IsEnum(UserRole)
+  @IsNotEmpty()
   role: UserRole;
 
   @ApiProperty({
@@ -49,5 +51,6 @@ export class CreateUserDto {
     description: 'Debe especificarse si el usuario está activo o no',
   })
   @IsBoolean()
+  @IsNotEmpty()
   active: boolean;
 }

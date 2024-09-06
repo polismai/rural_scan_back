@@ -1,4 +1,3 @@
-import { IsDateString } from 'class-validator';
 import { Animal } from '../../animals/entities/animal.entity';
 import { Potrero } from '../../potreros/entities/potrero.entity';
 import {
@@ -18,15 +17,15 @@ export class AnimalPotrero {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Animal)
-  @JoinColumn({ name: 'animalId', referencedColumnName: 'id' })
+  @ManyToOne(() => Animal, (animal) => animal.animalPotreros)
+  @JoinColumn({ name: 'animalId' })
   animal: Animal;
 
   @Column()
   animalId: string;
 
-  @ManyToOne(() => Potrero)
-  @JoinColumn({ name: 'potreroId', referencedColumnName: 'id' })
+  @ManyToOne(() => Potrero, (potrero) => potrero.animalPotreros)
+  @JoinColumn({ name: 'potreroId' })
   potrero: Potrero;
 
   @Column()
@@ -36,7 +35,6 @@ export class AnimalPotrero {
   entryDate: Date;
 
   @Column({ type: 'date', nullable: true, default: null })
-  @IsDateString()
   exitDate: Date;
 
   @CreateDateColumn({

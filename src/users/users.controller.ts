@@ -29,8 +29,8 @@ export class UsersController {
   }
 
   @Get()
-  async findAll() {
-    const users: User[] = await this.usersService.findAll();
+  async findUsers() {
+    const users: User[] = await this.usersService.findUsers();
     return users;
   }
 
@@ -41,15 +41,15 @@ export class UsersController {
   }
 
   @Patch(':id')
-  async update(
+  async updateUser(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return await this.usersService.update(id, updateUserDto);
+    return await this.usersService.updateUser(id, updateUserDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.usersService.remove(id);
+  async deleteUser(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.usersService.deleteUser(id);
   }
 }

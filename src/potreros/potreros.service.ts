@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Potrero } from './entities/potrero.entity';
 import { IsNull, Not, Repository } from 'typeorm';
 import { ErrorManager } from 'src/utils/error.manager';
-import { AnimalPotrero } from 'src/animal-potrero/entities/animal_potrero.entity';
+import { AnimalPotrero } from '../animal-potrero/entities/animal_potrero.entity';
 
 @Injectable()
 export class PotrerosService {
