@@ -7,12 +7,15 @@ import { Repository } from 'typeorm';
 import { ErrorManager } from '../utils/error.manager';
 import { UserRole } from '../common/enums/role.enum';
 import { GetAnimalsFilterDto } from './dto/filtered-animal.dto';
+import { AnimalPotrero } from '../animal-potrero/entities/animal_potrero.entity';
 
 @Injectable()
 export class AnimalsService {
   constructor(
     @InjectRepository(Animal)
     private animalRepository: Repository<Animal>,
+    @InjectRepository(AnimalPotrero)
+    private readonly animalPotreroRepository: Repository<AnimalPotrero>,
   ) {}
 
   async create(
@@ -132,6 +135,14 @@ export class AnimalsService {
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
+  }
+
+  async getAnimalPotreroMovements(animalId: string): Promise<AnimalPotrero[]> {
+    return await this.animalPotreroRepository.find({
+      where: { animalId },
+      order: { entryDate: 'ASC' },
+      relations: ['potrero'],
+    });
   }
 
   async update(

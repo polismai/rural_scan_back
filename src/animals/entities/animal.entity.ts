@@ -30,6 +30,7 @@ export class Animal {
   breed: Breed;
 
   @Column({
+    nullable: true,
     type: 'enum',
     enum: Breed,
   })
@@ -59,19 +60,19 @@ export class Animal {
   @Column({ nullable: true })
   observations: string;
 
-  @Column()
+  @Column({ nullable: true })
   motherTag: number;
 
-  @Column()
+  @Column({ nullable: true })
   fatherTag: string;
 
-  @Column()
+  @Column({ nullable: true })
   disappearanceDate: string;
 
-  @Column()
+  @Column({ nullable: true })
   inseminationDate: string;
 
-  @Column()
+  @Column({ nullable: true })
   calvingDate: string;
 
   @CreateDateColumn({

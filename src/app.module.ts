@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
 import { CompaniesModule } from './companies/companies.module';
 import { ConfigModule } from '@nestjs/config';
 import { FieldsModule } from './fields/fields.module';
@@ -10,6 +9,7 @@ import { AnimalsModule } from './animals/animals.module';
 import { UserActivityModule } from './user-activity/user-activity.module';
 import { AnimalPotreroModule } from './animal-potrero/animal-potrero.module';
 import { DataSourceConfig } from './config/data.source';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -24,9 +24,9 @@ import { DataSourceConfig } from './config/data.source';
     //     configService.get('typeorm'),
     // }),
     UsersModule,
-    AuthModule,
     CompaniesModule,
     FieldsModule,
+    AuthModule,
     PotrerosModule,
     AnimalsModule,
     UserActivityModule,

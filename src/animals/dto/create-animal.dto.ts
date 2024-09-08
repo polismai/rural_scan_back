@@ -22,6 +22,7 @@ export class CreateAnimalDto {
 
   @ApiProperty({ example: 'AA' })
   @IsEnum(Breed)
+  @IsOptional()
   crossbreed: Breed;
 
   @ApiProperty({ example: 'H' })
@@ -48,21 +49,26 @@ export class CreateAnimalDto {
 
   @ApiProperty({ example: '5555' })
   @IsNumber()
+  @IsOptional()
   motherTag: number;
 
   @ApiProperty({ example: '454545' })
   @IsString()
+  @IsOptional()
   fatherTag: string;
 
   @ApiProperty({ example: '2024-07-27' })
   @IsDateString()
+  @IsOptional()
   disappearanceDate: string;
 
   @ApiProperty({ example: '2024-02-06' })
   @IsDateString()
+  @IsOptional()
   inseminationDate: string;
 
   @ApiProperty({ example: '2024-09-03' })
   @IsDateString()
+  @IsOptional()
   calvingDate: string;
 }

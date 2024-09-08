@@ -18,9 +18,10 @@ import { UserActiveInterface } from '../common/interfaces/user-active.interface'
 import { GetAnimalsFilterDto } from './dto/filtered-animal.dto';
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { FieldId } from '../auth/decorators/fieldId.decorator';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { UserRole } from 'src/common/enums/role.enum';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../common/enums/role.enum';
 import { ApiTags } from '@nestjs/swagger';
+import { AnimalPotrero } from '../animal-potrero/entities/animal_potrero.entity';
 
 @ApiTags('Animals')
 @UseGuards(AuthGuard)
@@ -47,6 +48,13 @@ export class AnimalsController {
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string, @FieldId() fieldId: string) {
     return this.animalsService.findOne(id, fieldId);
+  }
+
+  @Get(':id/potrero-movements')
+  async getAnimalPotreroMovements(
+    @Param('id', ParseUUIDPipe) animalId: string,
+  ): Promise<AnimalPotrero[]> {
+    return this.animalsService.getAnimalPotreroMovements(animalId);
   }
 
   @Patch(':id')
