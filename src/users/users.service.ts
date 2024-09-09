@@ -69,12 +69,6 @@ export class UsersService {
         where: { username },
         select: ['id', 'username', 'password', 'role', 'fieldId'],
       });
-      if (!user) {
-        throw new ErrorManager({
-          type: 'NOT_FOUND',
-          message: 'user not found',
-        });
-      }
       return user;
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
