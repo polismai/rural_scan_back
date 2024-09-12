@@ -7,15 +7,27 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { Reflector } from '@nestjs/core';
+import { PUBLIC_KEY } from '../constants/key-decorators';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const isPublic = this.reflector.get<boolean>(
+      PUBLIC_KEY,
+      context.getHandler(),
+    );
+
+    if (isPublic) {
+      return true;
+    }
+
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
@@ -32,12 +44,6 @@ export class AuthGuard implements CanActivate {
     } catch (error) {
       throw new UnauthorizedException('invalid token');
     }
-    // Aquí puedes implementar tu lógica de autenticación o autorización.
-    // Por ejemplo, verificar si el usuario está autenticado, si tiene los roles adecuados, etc.
-
-    // Si la validación es exitosa, devuelve true, permitiendo el acceso.
-    // Si la validación falla, devuelve false, denegando el acceso.
-
     return true;
   }
 
