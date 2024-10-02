@@ -17,7 +17,9 @@ export class AnimalPotrero {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Animal, (animal) => animal.animalPotreros)
+  @ManyToOne(() => Animal, (animal) => animal.animalPotreros, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'animalId' })
   animal: Animal;
 

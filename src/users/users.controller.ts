@@ -28,9 +28,14 @@ export class UsersController {
     return await this.usersService.createUser(createUserDto);
   }
 
-  @Get()
-  async findUsers() {
-    const users: User[] = await this.usersService.findUsers();
+  @Get('roles')
+  getRoles() {
+    return Object.values(UserRole);
+  }
+
+  @Get(':fieldId')
+  async findUsers(@Param('fieldId', ParseUUIDPipe) fieldId: string) {
+    const users: User[] = await this.usersService.findUsers(fieldId);
     return users;
   }
 

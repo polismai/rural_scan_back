@@ -15,6 +15,7 @@ import { UserRole } from 'src/common/enums/role.enum';
 import { PotrerosService } from 'src/potreros/potreros.service';
 import { ApiTags } from '@nestjs/swagger';
 import { UpdateFieldDto } from './dto/update-field.dto';
+import { Field } from './entities/field.entity';
 // import { UpdateFieldDto } from './dto/update-field.dto';
 
 @ApiTags('Fields')
@@ -31,9 +32,11 @@ export class FieldsController {
     return await this.fieldsService.createField(createFieldDto);
   }
 
-  @Get()
-  async getFields() {
-    return await this.fieldsService.getFields();
+  @Get('/:companyId')
+  async getFieldsByCompany(
+    @Param('companyId', ParseUUIDPipe) companyId: string,
+  ): Promise<Field[]> {
+    return await this.fieldsService.getFieldsByCompany(companyId);
   }
 
   @Get(':id')

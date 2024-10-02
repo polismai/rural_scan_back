@@ -22,7 +22,7 @@ export class CompaniesService {
       if (companyFound) {
         throw new ErrorManager({
           type: 'CONFLICT',
-          message: `the company ${name} already exists`,
+          message: `La compania ${name} ya existe`,
         });
       }
       return await this.companyRepository.save({ name, active });

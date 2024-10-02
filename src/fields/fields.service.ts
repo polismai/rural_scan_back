@@ -44,17 +44,37 @@ export class FieldsService {
     }
   }
 
-  async getFields(): Promise<Field[]> {
+  // async getFields(): Promise<Field[]> {
+  //   try {
+  //     const fields: Field[] = await this.fieldRepository.find({
+  //       relations: ['company'],
+  //     });
+  //     if (fields.length === 0) {
+  //       throw new ErrorManager({
+  //         type: 'NOT_FOUND',
+  //         message: 'fields not found',
+  //       });
+  //     }
+  //     return fields;
+  //   } catch (error) {
+  //     throw ErrorManager.createSignatureError(error.message);
+  //   }
+  // }
+
+  async getFieldsByCompany(companyId: string): Promise<Field[]> {
     try {
       const fields: Field[] = await this.fieldRepository.find({
+        where: { company: { id: companyId } },
         relations: ['company'],
       });
+
       if (fields.length === 0) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: 'fields not found',
+          message: 'Fields not found for this company',
         });
       }
+
       return fields;
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);

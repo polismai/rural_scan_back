@@ -75,10 +75,15 @@ export class UsersService {
     }
   }
 
-  async findUsers(): Promise<User[]> {
+  async findUsers(fieldId: string): Promise<User[]> {
     try {
       const users: User[] = await this.userRepository.find({
         relations: ['field'],
+        where: {
+          field: {
+            id: fieldId,
+          },
+        },
       });
 
       if (users.length === 0) {

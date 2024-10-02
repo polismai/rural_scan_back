@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsString } from 'class-validator';
+import { IsString, IsUUID } from 'class-validator';
 
 export class CreateFieldDto {
   @ApiProperty({ example: 'Field 1' })
@@ -19,6 +19,6 @@ export class CreateFieldDto {
   owner: string;
 
   @ApiProperty({ example: 'c443a2e2-393a-4d47-b275-25f1d3efffa2' })
-  @IsString()
+  @IsUUID()
   companyId: string;
 }

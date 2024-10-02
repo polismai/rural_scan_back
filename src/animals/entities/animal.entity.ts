@@ -94,6 +94,8 @@ export class Animal {
   @Column()
   fieldId: string;
 
-  @OneToMany(() => AnimalPotrero, (animalPotrero) => animalPotrero.animal)
+  @OneToMany(() => AnimalPotrero, (animalPotrero) => animalPotrero.animal, {
+    cascade: ['remove'],
+  })
   animalPotreros: AnimalPotrero[];
 }
