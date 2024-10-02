@@ -16,7 +16,9 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors();
+  app.enableCors({
+    origin: '*',
+  });
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Rural_Scan_Back')
