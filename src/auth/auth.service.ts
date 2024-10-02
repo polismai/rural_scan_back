@@ -1,12 +1,13 @@
 import { UserActivityService } from './../user-activity/user-activity.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import * as bcryptjs from 'bcryptjs';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
-import { UserActiveInterface } from 'src/common/interfaces/user-active.interface';
+import { UserActiveInterface } from '../common/interfaces/user-active.interface';
 import { ConfigService } from '@nestjs/config';
-import { UserRole } from 'src/common/enums/role.enum';
+import { UserRole } from '../common/enums/role.enum';
+import { PayloadToken } from './interfaces/auth.interface';
 
 @Injectable()
 export class AuthService {
@@ -30,20 +31,26 @@ export class AuthService {
     const user = await this.usersService.findByUsernameWithPassword(username);
 
     if (!user) {
-      throw new UnauthorizedException('username is wrong');
+      throw new UnauthorizedException('datos incorrectos');
     }
 
     const isPasswordValid = await bcryptjs.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('invalid password');
+      throw new UnauthorizedException('datos incorrectos');
     }
 
     const { id, role, fieldId } = user;
 
     const tokenOptions = rememberMe ? {} : { expiresIn: '30d' };
 
-    const payload = { sub: id, id, username: user.username, role, fieldId };
+    const payload: PayloadToken = {
+      sub: id,
+      id,
+      username: user.username,
+      role,
+      fieldId,
+    };
 
     const token = await this.jwtService.signAsync(payload, tokenOptions);
 

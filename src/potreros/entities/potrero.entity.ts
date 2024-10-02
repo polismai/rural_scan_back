@@ -1,4 +1,4 @@
-import { Field } from 'src/fields/entities/field.entity';
+import { Field } from '../../fields/entities/field.entity';
 import { ForageStatus } from '../../common/enums/forage.enum';
 import {
   Column,
@@ -6,11 +6,15 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
+import { AnimalPotrero } from '../../animal-potrero/entities/animal_potrero.entity';
 
 @Entity()
+@Unique(['name', 'fieldId'])
 export class Potrero {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -51,4 +55,7 @@ export class Potrero {
 
   @Column()
   fieldId: string;
+
+  @OneToMany(() => AnimalPotrero, (animalPotrero) => animalPotrero.potrero)
+  animalPotreros: AnimalPotrero[];
 }

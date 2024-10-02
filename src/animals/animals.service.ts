@@ -7,13 +7,15 @@ import { Repository } from 'typeorm';
 import { ErrorManager } from '../utils/error.manager';
 import { UserRole } from '../common/enums/role.enum';
 import { GetAnimalsFilterDto } from './dto/filtered-animal.dto';
-import { AnimalPotrero } from 'src/animal-potrero/entities/animal_potrero.entity';
+import { AnimalPotrero } from '../animal-potrero/entities/animal_potrero.entity';
 
 @Injectable()
 export class AnimalsService {
   constructor(
     @InjectRepository(Animal)
     private animalRepository: Repository<Animal>,
+    @InjectRepository(AnimalPotrero)
+    private readonly animalPotreroRepository: Repository<AnimalPotrero>,
   ) {}
 
   async create(
@@ -52,17 +54,10 @@ export class AnimalsService {
       const query = this.animalRepository
         .createQueryBuilder('animal')
         .leftJoinAndSelect('animal.field', 'field')
-        .leftJoinAndSelect(
-          (subQuery) =>
-            subQuery
-              .select('animalPotrero')
-              .from(AnimalPotrero, 'animalPotrero')
-              .where('animalPotrero.exitDate IS NULL')
-              .andWhere('animalPotrero.animalId = animal.id'),
-          'currentPotrero',
-        )
-        .leftJoinAndSelect('currentPotrero.potrero', 'potrero')
-        .where({ fieldId });
+        .leftJoinAndSelect('animal.animalPotreros', 'animalPotreros')
+        .leftJoinAndSelect('animalPotreros.potrero', 'potrero')
+        .where('animal.fieldId = :fieldId', { fieldId })
+        .andWhere('animalPotreros.exitDate IS NULL');
 
       if (breed) {
         query.andWhere('animal.breed = :breed', { breed });
@@ -118,10 +113,16 @@ export class AnimalsService {
 
   async findOne(id: string, fieldId: string): Promise<Animal> {
     try {
-      const animal = await this.animalRepository.findOne({
-        where: { id, fieldId },
-        relations: ['field', 'potrero'],
-      });
+      const query = this.animalRepository
+        .createQueryBuilder('animal')
+        .leftJoinAndSelect('animal.field', 'field')
+        .leftJoinAndSelect('animal.animalPotreros', 'animalPotreros')
+        .leftJoinAndSelect('animalPotreros.potrero', 'potrero')
+        .where('animal.fieldId = :fieldId', { fieldId })
+        .andWhere({ id })
+        .andWhere('animalPotreros.exitDate IS NULL');
+
+      const animal = await query.getOne();
 
       if (!animal) {
         throw new ErrorManager({
@@ -134,6 +135,14 @@ export class AnimalsService {
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
+  }
+
+  async getAnimalPotreroMovements(animalId: string): Promise<AnimalPotrero[]> {
+    return await this.animalPotreroRepository.find({
+      where: { animalId },
+      order: { entryDate: 'ASC' },
+      relations: ['potrero'],
+    });
   }
 
   async update(

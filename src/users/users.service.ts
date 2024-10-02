@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import * as bcryptjs from 'bcryptjs';
 import { ErrorManager } from '../utils/error.manager';
 
@@ -20,7 +20,7 @@ export class UsersService {
     fieldId,
     role,
     active,
-  }: CreateUserDto) {
+  }: CreateUserDto): Promise<User> {
     try {
       const userFound = await this.userRepository.findOne({
         where: {
@@ -65,26 +65,25 @@ export class UsersService {
 
   async findByUsernameWithPassword(username: string) {
     try {
-      const user = await this.userRepository.findOne({
+      const user: User = await this.userRepository.findOne({
         where: { username },
         select: ['id', 'username', 'password', 'role', 'fieldId'],
       });
-      if (!user) {
-        throw new ErrorManager({
-          type: 'NOT_FOUND',
-          message: 'user not found',
-        });
-      }
       return user;
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
   }
 
-  async findAll(): Promise<User[]> {
+  async findUsers(fieldId: string): Promise<User[]> {
     try {
-      const users = await this.userRepository.find({
+      const users: User[] = await this.userRepository.find({
         relations: ['field'],
+        where: {
+          field: {
+            id: fieldId,
+          },
+        },
       });
 
       if (users.length === 0) {
@@ -99,35 +98,50 @@ export class UsersService {
     }
   }
 
-  async getUserById(id: string) {
-    return await this.userRepository.findOne({ where: { id } });
-  }
-
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async getUserById(id: string): Promise<User> {
     try {
-      const userFound = await this.userRepository.findOneBy({ id });
-
-      if (!userFound) {
+      const user: User = await this.userRepository.findOneBy({ id });
+      if (user) {
+        return user;
+      } else {
         throw new ErrorManager({
           type: 'NOT_FOUND',
           message: 'user not found',
         });
       }
-
-      const updatedUser = this.userRepository.merge(userFound, updateUserDto);
-      return await this.userRepository.save(updatedUser);
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
   }
 
-  async remove(id: string) {
+  async updateUser(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateResult> {
     try {
-      const user = await this.userRepository.delete(id);
+      const user: UpdateResult = await this.userRepository.update(
+        id,
+        updateUserDto,
+      );
       if (user.affected === 0) {
         throw new ErrorManager({
           type: 'BAD_REQUEST',
-          message: 'No se pudo eliminar',
+          message: 'el usuario no se pudo actualizar',
+        });
+      }
+      return user;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
+
+  async deleteUser(id: string): Promise<DeleteResult> {
+    try {
+      const user: DeleteResult = await this.userRepository.delete(id);
+      if (user.affected === 0) {
+        throw new ErrorManager({
+          type: 'BAD_REQUEST',
+          message: 'No se pudo eliminar el usuario',
         });
       }
       return user;

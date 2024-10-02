@@ -1,6 +1,6 @@
 import { Field } from '../../fields/entities/field.entity';
 import { UserRole } from '../../common/enums/role.enum';
-// import { Company } from '../../companies/entities/company.entity';
+
 import {
   Column,
   CreateDateColumn,
@@ -8,10 +8,12 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
+@Unique(['username', 'fieldId'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -29,7 +31,7 @@ export class User {
   })
   role: UserRole;
 
-  @Column({ default: false })
+  @Column()
   active: boolean;
 
   @CreateDateColumn({

@@ -1,4 +1,4 @@
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 import { Animal } from '../../animals/entities/animal.entity';
 import { Company } from '../../companies/entities/company.entity';
 import {

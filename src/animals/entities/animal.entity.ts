@@ -12,8 +12,8 @@ import {
 } from 'typeorm';
 import { LifeStatus } from '../../common/enums/lifeStatus.enum';
 import { Traceability } from '../../common/enums/traceability.enum';
-import { Field } from 'src/fields/entities/field.entity';
-import { AnimalPotrero } from 'src/animal-potrero/entities/animal_potrero.entity';
+import { Field } from '../../fields/entities/field.entity';
+import { AnimalPotrero } from '../../animal-potrero/entities/animal_potrero.entity';
 
 @Entity()
 export class Animal {
@@ -30,6 +30,7 @@ export class Animal {
   breed: Breed;
 
   @Column({
+    nullable: true,
     type: 'enum',
     enum: Breed,
   })
@@ -59,19 +60,19 @@ export class Animal {
   @Column({ nullable: true })
   observations: string;
 
-  @Column()
+  @Column({ nullable: true })
   motherTag: number;
 
-  @Column()
+  @Column({ nullable: true })
   fatherTag: string;
 
-  @Column()
+  @Column({ nullable: true })
   disappearanceDate: string;
 
-  @Column()
+  @Column({ nullable: true })
   inseminationDate: string;
 
-  @Column()
+  @Column({ nullable: true })
   calvingDate: string;
 
   @CreateDateColumn({
@@ -93,6 +94,8 @@ export class Animal {
   @Column()
   fieldId: string;
 
-  @OneToMany(() => AnimalPotrero, (animalPotrero) => animalPotrero.animal)
-  potrero: AnimalPotrero[];
+  @OneToMany(() => AnimalPotrero, (animalPotrero) => animalPotrero.animal, {
+    cascade: ['remove'],
+  })
+  animalPotreros: AnimalPotrero[];
 }

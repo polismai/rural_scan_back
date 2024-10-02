@@ -7,14 +7,17 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
-  NotFoundException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserRole } from 'src/common/enums/role.enum';
-import { Auth } from 'src/auth/decorators/auth.decorator';
+import { UserRole } from '../common/enums/role.enum';
+import { Auth } from '../auth/decorators/auth.decorator';
+import { User } from './entities/user.entity';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Users')
 @Auth([UserRole.SUPERADMIN])
 @Controller('users')
 export class UsersController {
@@ -25,30 +28,33 @@ export class UsersController {
     return await this.usersService.createUser(createUserDto);
   }
 
-  @Get()
-  async findAll() {
-    return await this.usersService.findAll();
+  @Get('roles')
+  getRoles() {
+    return Object.values(UserRole);
+  }
+
+  @Get(':fieldId')
+  async findUsers(@Param('fieldId', ParseUUIDPipe) fieldId: string) {
+    const users: User[] = await this.usersService.findUsers(fieldId);
+    return users;
   }
 
   @Get(':id')
   async getUserById(@Param('id', ParseUUIDPipe) id: string) {
-    const user = await this.usersService.getUserById(id);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    const user: User = await this.usersService.getUserById(id);
     return user;
   }
 
   @Patch(':id')
-  async update(
+  async updateUser(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return await this.usersService.update(id, updateUserDto);
+    return await this.usersService.updateUser(id, updateUserDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.usersService.remove(id);
+  async deleteUser(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.usersService.deleteUser(id);
   }
 }

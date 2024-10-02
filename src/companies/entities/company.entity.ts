@@ -1,5 +1,5 @@
-import { Field } from 'src/fields/entities/field.entity';
-// import { User } from 'src/users/entities/user.entity';
+import { Field } from '../../fields/entities/field.entity';
+// import { User } from '../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,

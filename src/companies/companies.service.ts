@@ -3,8 +3,9 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 // import { UpdateCompanyDto } from './dto/update-company.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from './entities/company.entity';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult, DeleteResult } from 'typeorm';
 import { ErrorManager } from 'src/utils/error.manager';
+import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @Injectable()
 export class CompaniesService {
@@ -13,7 +14,7 @@ export class CompaniesService {
     private readonly companyRepository: Repository<Company>,
   ) {}
 
-  async create({ name, active }: CreateCompanyDto) {
+  async createCompany({ name, active }: CreateCompanyDto): Promise<Company> {
     try {
       const companyFound: Company = await this.companyRepository.findOneBy({
         name,
@@ -21,7 +22,7 @@ export class CompaniesService {
       if (companyFound) {
         throw new ErrorManager({
           type: 'CONFLICT',
-          message: `the company ${name} already exists`,
+          message: `La compania ${name} ya existe`,
         });
       }
       return await this.companyRepository.save({ name, active });
@@ -30,7 +31,7 @@ export class CompaniesService {
     }
   }
 
-  async findAll() {
+  async findCompanies(): Promise<Company[]> {
     try {
       const companies: Company[] = await this.companyRepository.find({
         relations: {
@@ -49,15 +50,54 @@ export class CompaniesService {
     }
   }
 
-  // findOne(id: string) {
-  //   return `This action returns a #${id} company`;
-  // }
+  async getCompanyById(id: string): Promise<Company> {
+    try {
+      const company: Company = await this.companyRepository.findOneBy({ id });
+      if (!company) {
+        throw new ErrorManager({
+          type: 'NOT_FOUND',
+          message: 'company not found',
+        });
+      }
+      return company;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
 
-  // update(id: string, updateCompanyDto: UpdateCompanyDto) {
-  //   return `This action updates a #${id} company`;
-  // }
+  async updateCompany(
+    id: string,
+    updateCompanyDto: UpdateCompanyDto,
+  ): Promise<UpdateResult> {
+    try {
+      const company: UpdateResult = await this.companyRepository.update(
+        id,
+        updateCompanyDto,
+      );
+      if (company.affected === 0) {
+        throw new ErrorManager({
+          type: 'BAD_REQUEST',
+          message: 'la compania no se pudo actualizar',
+        });
+      }
+      return company;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
 
-  // remove(id: string) {
-  //   return `This action removes a #${id} company`;
-  // }
+  async deleteCompany(id: string): Promise<DeleteResult> {
+    try {
+      const company: DeleteResult = await this.companyRepository.delete(id);
+      if (company.affected === 0) {
+        throw new ErrorManager({
+          type: 'BAD_REQUEST',
+          message: 'No se pudo eliminar la compania',
+        });
+      }
+      return company;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
 }
