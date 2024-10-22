@@ -1,5 +1,4 @@
 import { Field } from '../../fields/entities/field.entity';
-// import { User } from '../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -17,8 +16,11 @@ export class Company {
   @Column({ nullable: false, unique: true })
   name: string;
 
-  @Column({ default: false })
+  @Column({ default: true })
   active: boolean;
+
+  @Column({ nullable: false, default: 'Unknown' })
+  country: string;
 
   @CreateDateColumn({
     type: 'timestamp',
@@ -31,9 +33,6 @@ export class Company {
     name: 'updated_at',
   })
   updatedAt: Date;
-
-  // @OneToMany(() => User, (user) => user.company)
-  // users: User[];
 
   @OneToMany(() => Field, (field) => field.company)
   fields: Field[];

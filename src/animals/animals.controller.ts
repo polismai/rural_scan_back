@@ -9,6 +9,9 @@ import {
   ParseUUIDPipe,
   Query,
   UseGuards,
+  UseInterceptors,
+  BadRequestException,
+  UploadedFile,
 } from '@nestjs/common';
 import { AnimalsService } from './animals.service';
 import { CreateAnimalDto } from './dto/create-animal.dto';
@@ -22,6 +25,10 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../common/enums/role.enum';
 import { ApiTags } from '@nestjs/swagger';
 import { AnimalPotrero } from '../animal-potrero/entities/animal_potrero.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import * as path from 'path';
+import * as Multer from 'multer';
 
 @ApiTags('Animals')
 @UseGuards(AuthGuard)
@@ -35,6 +42,39 @@ export class AnimalsController {
     @FieldId() fieldId: string,
   ) {
     return await this.animalsService.create(createAnimalDto, fieldId);
+  }
+
+  @Post(':fieldId/upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (_req, file, callback) => {
+          const ext = path.extname(file.originalname);
+          const fileName = `${Date.now()}-${file.originalname}`;
+          callback(null, fileName);
+        },
+      }),
+      fileFilter: (req, file, callback) => {
+        if (!file.originalname.match(/\.(xlsx|xls)$/)) {
+          return callback(
+            new BadRequestException('Only Excel files are allowed!'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  async uploadFile(
+    @Param('fieldId', ParseUUIDPipe) fieldId: string,
+    @UploadedFile() file: Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+    const animals = await this.animalsService.processFile(file.path, fieldId);
+    return { data: animals };
   }
 
   @Get()

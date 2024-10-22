@@ -10,15 +10,16 @@ import {
 } from '@nestjs/common';
 import { FieldsService } from './fields.service';
 import { CreateFieldDto } from './dto/create-field.dto';
-import { Auth } from 'src/auth/decorators/auth.decorator';
-import { UserRole } from 'src/common/enums/role.enum';
-import { PotrerosService } from 'src/potreros/potreros.service';
+import { Auth } from '../auth/decorators/auth.decorator';
+import { UserRole } from '../common/enums/role.enum';
+import { PotrerosService } from '../potreros/potreros.service';
 import { ApiTags } from '@nestjs/swagger';
 import { UpdateFieldDto } from './dto/update-field.dto';
 import { Field } from './entities/field.entity';
 // import { UpdateFieldDto } from './dto/update-field.dto';
 
 @ApiTags('Fields')
+@Auth([UserRole.SUPERADMIN])
 @Controller('fields')
 export class FieldsController {
   constructor(
@@ -26,7 +27,6 @@ export class FieldsController {
     private readonly potrerosService: PotrerosService,
   ) {}
 
-  @Auth([UserRole.SUPERADMIN])
   @Post()
   async createField(@Body() createFieldDto: CreateFieldDto) {
     return await this.fieldsService.createField(createFieldDto);
@@ -42,6 +42,11 @@ export class FieldsController {
   @Get(':id')
   async getFieldById(@Param('id', ParseUUIDPipe) id: string) {
     return this.fieldsService.getFieldById(id);
+  }
+
+  @Patch(':id/soft-delete')
+  async softDeleteField(@Param('id', ParseUUIDPipe) id: string) {
+    return this.fieldsService.softDeleteField(id);
   }
 
   @Patch(':id')

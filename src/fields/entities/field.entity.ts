@@ -26,6 +26,12 @@ export class Field {
   @Column()
   owner: string;
 
+  @Column({ default: true })
+  isActive: boolean;
+
+  @Column({ nullable: false, default: 'Unknown' })
+  country: string;
+
   @CreateDateColumn({
     type: 'timestamp',
     name: 'created_at',

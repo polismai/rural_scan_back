@@ -135,6 +135,29 @@ export class UsersService {
     }
   }
 
+  async updatePassword(id: string, newPassword: string): Promise<UpdateResult> {
+    try {
+      // Encripta la nueva contraseña antes de guardarla
+      const hashedPassword = await bcryptjs.hash(newPassword, 10);
+
+      // Actualiza la contraseña en la base de datos
+      const result = await this.userRepository.update(id, {
+        password: hashedPassword,
+      });
+
+      if (result.affected === 0) {
+        throw new ErrorManager({
+          type: 'BAD_REQUEST',
+          message: 'No se pudo actualizar la contraseña del usuario',
+        });
+      }
+
+      return result;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
+
   async deleteUser(id: string): Promise<DeleteResult> {
     try {
       const user: DeleteResult = await this.userRepository.delete(id);
