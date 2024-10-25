@@ -58,6 +58,7 @@ export class AuthService {
 
     return {
       token,
+      role,
       username,
     };
   }

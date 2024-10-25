@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
-// import { UpdateCompanyDto } from './dto/update-company.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from './entities/company.entity';
 import { Repository, UpdateResult, DeleteResult } from 'typeorm';
@@ -41,7 +40,7 @@ export class CompaniesService {
       if (companies.length === 0) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: 'companies not found',
+          message: 'No se encontraron compañías',
         });
       }
       return companies;
@@ -63,6 +62,20 @@ export class CompaniesService {
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
+  }
+
+  async toggleCompanyStatus(id: string, isActive: boolean): Promise<Company> {
+    const company = await this.companyRepository.findOne({ where: { id } });
+
+    if (!company) {
+      throw new ErrorManager({
+        type: 'NOT_FOUND',
+        message: `La compañía con ID ${id} no fue encontrada`,
+      });
+    }
+
+    company.active = isActive;
+    return this.companyRepository.save(company);
   }
 
   async updateCompany(

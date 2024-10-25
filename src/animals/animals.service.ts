@@ -8,6 +8,7 @@ import { ErrorManager } from '../utils/error.manager';
 import { UserRole } from '../common/enums/role.enum';
 import { GetAnimalsFilterDto } from './dto/filtered-animal.dto';
 import { AnimalPotrero } from '../animal-potrero/entities/animal_potrero.entity';
+import * as xlsx from 'xlsx';
 
 @Injectable()
 export class AnimalsService {
@@ -17,6 +18,85 @@ export class AnimalsService {
     @InjectRepository(AnimalPotrero)
     private readonly animalPotreroRepository: Repository<AnimalPotrero>,
   ) {}
+
+  readXlsxFile(filePath: string, fieldId: string) {
+    const workbook = xlsx.readFile(filePath);
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const data = xlsx.utils.sheet_to_json(sheet);
+
+    const animals = data.map((row) => ({
+      tag: Number(row['Dispositivo ']),
+      breed: row['Raza '],
+      crossbreed: row['Cruza '] || null,
+      sex: this.sexTransform(row['Sexo ']),
+      born: this.calculateBirthDate(row['Edad (dias) ']),
+      lifeStatus: this.lifeStatusTransform(row['Status de vida ']),
+      traceabilityStatus: this.traceabilityTransform(
+        row['Status de trazabilidad '],
+      ),
+      fieldId: fieldId,
+    }));
+
+    return animals;
+  }
+
+  sexTransform(sex: string): string {
+    return sex === 'Macho ' ? 'M' : 'H';
+  }
+
+  lifeStatusTransform(lifeStatus: string): string {
+    switch (lifeStatus) {
+      case 'Vivo':
+        return 'V';
+      case 'Muerto':
+        return 'M';
+      case 'Faenado':
+        return 'F';
+      case 'Exportado':
+        return 'E';
+      case 'No Aplica':
+        return 'N';
+      default:
+        return 'N';
+    }
+  }
+
+  traceabilityTransform(traceabilityStatus: string): string {
+    switch (traceabilityStatus) {
+      case 'Trazado':
+        return 'S';
+      case 'No Trazado':
+        return 'N';
+      case 'Observado':
+        return 'O';
+      default:
+        return 'N';
+    }
+  }
+
+  calculateBirthDate(days: string): string {
+    const today = new Date();
+    return new Date(today.setDate(today.getDate() - Number(days)))
+      .toISOString()
+      .split('T')[0];
+  }
+
+  async saveToDatabase(animals: any[]): Promise<void> {
+    for (const animal of animals) {
+      try {
+        await this.animalRepository.save(animal);
+      } catch (err) {
+        console.error('Error inserting data', err);
+      }
+    }
+  }
+
+  async processFile(filePath: string, fieldId: string) {
+    const animals = this.readXlsxFile(filePath, fieldId);
+    await this.saveToDatabase(animals);
+    return animals;
+  }
 
   async create(
     createAnimalDto: CreateAnimalDto,

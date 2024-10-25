@@ -36,6 +36,14 @@ export class CompaniesController {
     return this.companiesService.getCompanyById(id);
   }
 
+  @Patch(':id/toggle-status')
+  async toggleCompanyStatus(
+    @Param('id') id: string,
+    @Body('isActive') isActive: boolean,
+  ) {
+    return this.companiesService.toggleCompanyStatus(id, isActive);
+  }
+
   @Patch(':id')
   async updateCompany(
     @Param('id', ParseUUIDPipe) id: string,

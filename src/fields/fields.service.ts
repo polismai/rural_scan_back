@@ -64,7 +64,10 @@ export class FieldsService {
   async getFieldsByCompany(companyId: string): Promise<Field[]> {
     try {
       const fields: Field[] = await this.fieldRepository.find({
-        where: { company: { id: companyId } },
+        where: {
+          company: { id: companyId },
+          isActive: true,
+        },
         relations: ['company'],
       });
 
@@ -111,7 +114,7 @@ export class FieldsService {
       if (field.affected === 0) {
         throw new ErrorManager({
           type: 'BAD_REQUEST',
-          message: 'el field no se pudo actualizar',
+          message: 'el campo no se pudo actualizar',
         });
       }
       return field;
@@ -120,13 +123,27 @@ export class FieldsService {
     }
   }
 
+  async softDeleteField(id: string): Promise<Field> {
+    const field = await this.fieldRepository.findOne({ where: { id } });
+
+    if (!field) {
+      throw new ErrorManager({
+        type: 'NOT_FOUND',
+        message: `El campo con ID ${id} no fue encontrado`,
+      });
+    }
+
+    field.isActive = false;
+    return this.fieldRepository.save(field);
+  }
+
   async deleteField(id: string): Promise<DeleteResult> {
     try {
       const field: DeleteResult = await this.fieldRepository.delete(id);
       if (field.affected === 0) {
         throw new ErrorManager({
           type: 'BAD_REQUEST',
-          message: 'No se pudo eliminar el field',
+          message: 'No se pudo eliminar el campo',
         });
       }
       return field;
