@@ -50,12 +50,11 @@ export class AnimalsController {
       storage: diskStorage({
         destination: './uploads',
         filename: (_req, file, callback) => {
-          const ext = path.extname(file.originalname);
           const fileName = `${Date.now()}-${file.originalname}`;
           callback(null, fileName);
         },
       }),
-      fileFilter: (req, file, callback) => {
+      fileFilter: (_, file, callback) => {
         if (!file.originalname.match(/\.(xlsx|xls)$/)) {
           return callback(
             new BadRequestException('Only Excel files are allowed!'),

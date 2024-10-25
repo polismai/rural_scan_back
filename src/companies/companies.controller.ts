@@ -44,11 +44,6 @@ export class CompaniesController {
     return this.companiesService.toggleCompanyStatus(id, isActive);
   }
 
-  // @Patch(':id/soft-delete')
-  // async softDeleteCompany(@Param('id', ParseUUIDPipe) id: string) {
-  //   return this.companiesService.softDeleteCompany(id);
-  // }
-
   @Patch(':id')
   async updateCompany(
     @Param('id', ParseUUIDPipe) id: string,

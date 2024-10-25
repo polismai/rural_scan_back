@@ -94,7 +94,6 @@ export class AnimalsService {
 
   async processFile(filePath: string, fieldId: string) {
     const animals = this.readXlsxFile(filePath, fieldId);
-    console.log('ESTOS SON LOS ANIMALS', animals);
     await this.saveToDatabase(animals);
     return animals;
   }
