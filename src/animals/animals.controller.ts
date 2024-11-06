@@ -27,7 +27,6 @@ import { ApiTags } from '@nestjs/swagger';
 import { AnimalPotrero } from '../animal-potrero/entities/animal_potrero.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import * as path from 'path';
 import * as Multer from 'multer';
 
 @ApiTags('Animals')

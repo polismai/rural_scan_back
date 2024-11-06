@@ -13,7 +13,7 @@ export class CompaniesService {
     private readonly companyRepository: Repository<Company>,
   ) {}
 
-  async createCompany({ name, active }: CreateCompanyDto): Promise<Company> {
+  async createCompany({ name, active, country, email }: CreateCompanyDto): Promise<Company> {
     try {
       const companyFound: Company = await this.companyRepository.findOneBy({
         name,
@@ -24,7 +24,7 @@ export class CompaniesService {
           message: `La compania ${name} ya existe`,
         });
       }
-      return await this.companyRepository.save({ name, active });
+      return await this.companyRepository.save({ name, active, country, email });
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
