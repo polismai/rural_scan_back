@@ -12,6 +12,9 @@ echo "Install app dependencies"
 sudo rm -rf node_modules package-lock.json
 sudo yarn install --frozen-lockfile
 
+echo "Migrations"
+sudo yarn migration:run
+
 echo "Build app"
 sudo yarn build
 
