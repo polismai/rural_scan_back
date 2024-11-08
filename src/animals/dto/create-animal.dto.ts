@@ -13,8 +13,8 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAnimalDto {
   @ApiProperty({ example: '3333' })
-  @IsNumber()
-  tag: number;
+  @IsString()
+  tag: string;
 
   @ApiProperty({ example: 'BU' })
   @IsEnum(Breed)

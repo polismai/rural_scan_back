@@ -21,11 +21,16 @@ export class FieldsService {
   async createField({
     name,
     location,
+    country,
     owner,
     companyId,
   }: CreateFieldDto): Promise<Field> {
     try {
-      const fieldFound: Field = await this.fieldRepository.findOneBy({ name });
+      const fieldFound: Field = await this.fieldRepository.findOneBy({ 
+        name,
+        isActive: true 
+      });
+      
       if (fieldFound) {
         throw new ErrorManager({
           type: 'CONFLICT',
@@ -36,6 +41,7 @@ export class FieldsService {
       return await this.fieldRepository.save({
         name,
         location,
+        country,
         owner,
         companyId,
       });

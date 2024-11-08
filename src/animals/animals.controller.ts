@@ -28,6 +28,7 @@ import { AnimalPotrero } from '../animal-potrero/entities/animal_potrero.entity'
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as Multer from 'multer';
+import * as fs from 'fs';
 
 @ApiTags('Animals')
 @UseGuards(AuthGuard)
@@ -43,7 +44,7 @@ export class AnimalsController {
     return await this.animalsService.create(createAnimalDto, fieldId);
   }
 
-  @Post(':fieldId/upload')
+  @Post(':fieldId/:country/upload')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -66,12 +67,21 @@ export class AnimalsController {
   )
   async uploadFile(
     @Param('fieldId', ParseUUIDPipe) fieldId: string,
+    @Param('country') country: string,
     @UploadedFile() file: Multer.File,
   ) {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
-    const animals = await this.animalsService.processFile(file.path, fieldId);
+    const animals = await this.animalsService.processFile(file.path, fieldId, country);
+
+    try {
+      await fs.promises.unlink(file.path);
+      console.log(`Archivo ${file.path} eliminado con éxito.`);
+    } catch (error) {
+      console.error(`Error al eliminar el archivo: ${error.message}`);
+    }
+    
     return { data: animals };
   }
 
