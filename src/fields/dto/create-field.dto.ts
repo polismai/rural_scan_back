@@ -8,6 +8,11 @@ export class CreateFieldDto {
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   name: string;
 
+  @ApiProperty({ example: 'UY' })
+  @IsString()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  country: string;
+
   @ApiProperty({ example: 'ASDF234' })
   @IsString()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))

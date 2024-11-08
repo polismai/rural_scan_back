@@ -19,25 +19,41 @@ export class AnimalsService {
     private readonly animalPotreroRepository: Repository<AnimalPotrero>,
   ) {}
 
-  readXlsxFile(filePath: string, fieldId: string) {
+  readXlsxFile(filePath: string, fieldId: string, country: string) {
+
+    let countryCode = '';
+    if (country !== 'Unknown') {
+      if (country.toUpperCase() === 'UY') {
+        countryCode = '858';
+      }
+    }
+
     const workbook = xlsx.readFile(filePath);
     const sheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[sheetName];
     const data = xlsx.utils.sheet_to_json(sheet);
 
-    const animals = data.map((row) => ({
-      tag: Number(row['Dispositivo ']),
-      breed: row['Raza '],
-      crossbreed: row['Cruza '] || null,
-      sex: this.sexTransform(row['Sexo ']),
-      born: this.calculateBirthDate(row['Edad (dias) ']),
-      lifeStatus: this.lifeStatusTransform(row['Status de vida ']),
-      traceabilityStatus: this.traceabilityTransform(
-        row['Status de trazabilidad '],
-      ),
-      fieldId: fieldId,
-    }));
-
+    const animals = data.map((row) => {
+      let tag = String(row['Dispositivo ']);
+      if (tag.length === 8) {
+        tag = '0' + tag;
+      }
+      
+      return (
+        {
+          tag: countryCode + tag,
+          breed: row['Raza '],
+          crossbreed: row['Cruza '] || null,
+          sex: this.sexTransform(row['Sexo ']),
+          born: this.calculateBirthDate(row['Edad (dias) ']),
+          lifeStatus: this.lifeStatusTransform(row['Status de vida ']),
+          traceabilityStatus: this.traceabilityTransform(
+            row['Status de trazabilidad '],
+          ),
+          fieldId: fieldId,
+        }
+      )
+    })
     return animals;
   }
 
@@ -92,8 +108,8 @@ export class AnimalsService {
     }
   }
 
-  async processFile(filePath: string, fieldId: string) {
-    const animals = this.readXlsxFile(filePath, fieldId);
+  async processFile(filePath: string, fieldId: string, country: string) {
+    const animals = this.readXlsxFile(filePath, fieldId, country);
     await this.saveToDatabase(animals);
     return animals;
   }
@@ -128,7 +144,7 @@ export class AnimalsService {
     filterDto: GetAnimalsFilterDto,
     fieldId: string,
   ): Promise<{ data: Animal[]; total: number }> {
-    const { breed, potreroId, sex, age, page = 1, limit = 10 } = filterDto;
+    const { tag, breed, potreroId, sex, age, page = 1, limit = 10 } = filterDto;
 
     try {
       const query = this.animalRepository
@@ -138,6 +154,10 @@ export class AnimalsService {
         .leftJoinAndSelect('animalPotreros.potrero', 'potrero')
         .where('animal.fieldId = :fieldId', { fieldId })
         .andWhere('animalPotreros.exitDate IS NULL');
+
+      if (tag) {
+        query.andWhere('animal.tag = :tag', { tag });
+      }
 
       if (breed) {
         query.andWhere('animal.breed = :breed', { breed });

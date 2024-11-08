@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsString } from 'class-validator';
 
 export class CreateCompanyDto {
   @ApiProperty({ example: 'FAKE S.A.' })
@@ -9,4 +9,12 @@ export class CreateCompanyDto {
   @ApiProperty({ example: 'true' })
   @IsBoolean()
   active: boolean;
+
+  @ApiProperty({ example: 'Uruguay'})
+  @IsString()
+  country: string;
+
+  @ApiProperty({ example: 'email@mail.com'})
+  @IsEmail()
+  email: string;
 }

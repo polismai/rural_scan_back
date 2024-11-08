@@ -21,7 +21,7 @@ export class Animal {
   id: string;
 
   @Column({ unique: true })
-  tag: number;
+  tag: string;
 
   @Column({
     type: 'enum',

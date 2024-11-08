@@ -22,6 +22,9 @@ export class Company {
   @Column({ nullable: false, default: 'Unknown' })
   country: string;
 
+  @Column({ nullable: false, default: 'mail@mail.com'})
+  email: string;
+
   @CreateDateColumn({
     type: 'timestamp',
     name: 'created_at',
