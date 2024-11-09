@@ -156,7 +156,7 @@ export class AnimalsService {
         .andWhere('animalPotreros.exitDate IS NULL');
 
       if (tag) {
-        query.andWhere('animal.tag = :tag', { tag });
+        query.andWhere('animal.tag LIKE :tag', { tag: `%${tag}%` });
       }
 
       if (breed) {
