@@ -32,7 +32,7 @@ export class FieldsController {
     return await this.fieldsService.createField(createFieldDto);
   }
 
-  @Get('/:companyId')
+  @Get('/company/:companyId')
   async getFieldsByCompany(
     @Param('companyId', ParseUUIDPipe) companyId: string,
   ): Promise<Field[]> {
@@ -47,6 +47,14 @@ export class FieldsController {
   @Patch(':id/soft-delete')
   async softDeleteField(@Param('id', ParseUUIDPipe) id: string) {
     return this.fieldsService.softDeleteField(id);
+  }
+
+  @Patch(':id/toggle-status')
+  async toggleFieldStatus(
+    @Param('id') id: string,
+    @Body('isActive') isActive: boolean,
+  ) {
+    return this.fieldsService.toggleFieldStatus(id, isActive);
   }
 
   @Patch(':id')

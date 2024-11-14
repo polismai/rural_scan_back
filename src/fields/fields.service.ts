@@ -72,7 +72,6 @@ export class FieldsService {
       const fields: Field[] = await this.fieldRepository.find({
         where: {
           company: { id: companyId },
-          isActive: true,
         },
         relations: ['company'],
       });
@@ -140,6 +139,20 @@ export class FieldsService {
     }
 
     field.isActive = false;
+    return this.fieldRepository.save(field);
+  }
+
+  async toggleFieldStatus(id: string, isActive: boolean): Promise<Field> {
+    const field = await this.fieldRepository.findOne({ where: { id } });
+
+    if (!field) {
+      throw new ErrorManager({
+        type: 'NOT_FOUND',
+        message: `El campo con ID ${id} no fue encontrado`,
+      });
+    }
+
+    field.isActive = isActive;
     return this.fieldRepository.save(field);
   }
 

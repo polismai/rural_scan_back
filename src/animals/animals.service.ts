@@ -58,7 +58,7 @@ export class AnimalsService {
   }
 
   sexTransform(sex: string): string {
-    return sex === 'Macho ' ? 'M' : 'H';
+    return sex.trim() === 'Macho' ? 'M' : 'H';
   }
 
   lifeStatusTransform(lifeStatus: string): string {
