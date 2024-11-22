@@ -2,13 +2,19 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  UnauthorizedException,
+  HttpException, HttpStatus
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { PUBLIC_KEY } from '../constants/key-decorators';
+
+export class CustomUnauthorizedException extends HttpException {
+  constructor() {
+    super('Acceso no autorizado', HttpStatus.FORBIDDEN);
+  }
+}
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -31,7 +37,8 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UnauthorizedException('Bearer token not found');
+      // throw new UnauthorizedException('Bearer token not found');
+      throw new CustomUnauthorizedException();
     }
 
     try {
@@ -42,7 +49,8 @@ export class AuthGuard implements CanActivate {
       // payload.exp = new Date(payload.exp * 1000);
       request.user = payload;
     } catch (error) {
-      throw new UnauthorizedException('invalid token');
+      // throw new UnauthorizedException('invalid token');
+      throw new CustomUnauthorizedException();
     }
     return true;
   }

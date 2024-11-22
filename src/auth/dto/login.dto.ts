@@ -13,7 +13,7 @@ export class LoginDto {
     example: 'Maia',
     description: 'El username debe tener como mínimo 3 caracteres',
   })
-  @IsNotEmpty()
+  @IsNotEmpty({message: 'El usuario no puede estar vacío'})
   @IsString()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   username: string;
@@ -22,10 +22,10 @@ export class LoginDto {
     example: '1234AbcD',
     description: 'La password debe tener como mínimo 6 caracteres',
   })
-  @IsNotEmpty()
+  @IsNotEmpty({message: 'La contraseña no puede estar vacía'})
   @IsString()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
-  @MinLength(6)
+  @MinLength(6, {message: 'La contraseña debe tener como mínimo 6 caracteres'})
   password: string;
 
   @ApiProperty({
