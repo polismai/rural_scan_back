@@ -23,6 +23,9 @@ export class Field {
   @Column()
   location: string;
 
+  @Column({ nullable: true })
+  coords: string;
+
   @Column()
   owner: string;
 

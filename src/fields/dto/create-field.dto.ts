@@ -18,6 +18,11 @@ export class CreateFieldDto {
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   location: string;
 
+  @ApiProperty({ example: '-34.9264248,-54.9309671' })
+  @IsString()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  coords: string;
+
   @ApiProperty({ example: 'DASDA221' })
   @IsString()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))

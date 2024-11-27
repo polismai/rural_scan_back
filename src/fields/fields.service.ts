@@ -22,6 +22,7 @@ export class FieldsService {
     name,
     location,
     country,
+    coords,
     owner,
     companyId,
   }: CreateFieldDto): Promise<Field> {
@@ -42,6 +43,7 @@ export class FieldsService {
         name,
         location,
         country,
+        coords,
         owner,
         companyId,
       });
