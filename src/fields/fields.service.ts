@@ -22,6 +22,7 @@ export class FieldsService {
     name,
     location,
     country,
+    coords,
     owner,
     companyId,
   }: CreateFieldDto): Promise<Field> {
@@ -42,6 +43,7 @@ export class FieldsService {
         name,
         location,
         country,
+        coords,
         owner,
         companyId,
       });
@@ -93,7 +95,7 @@ export class FieldsService {
     try {
       const field: Field = await this.fieldRepository.findOne({
         where: { id },
-        relations: ['company'],
+        relations: ['company', 'potreros'],
       });
       if (!field) {
         throw new ErrorManager({

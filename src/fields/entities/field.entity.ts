@@ -11,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Potrero } from '../../potreros/entities/potrero.entity';
 
 @Entity()
 export class Field {
@@ -22,6 +23,9 @@ export class Field {
 
   @Column()
   location: string;
+
+  @Column({ nullable: true })
+  coords: string;
 
   @Column()
   owner: string;
@@ -56,4 +60,7 @@ export class Field {
 
   @OneToMany(() => Animal, (animal) => animal.field)
   animals: Animal[];
+
+  @OneToMany(() => Potrero, (potrero) => potrero.field)
+  potreros: Potrero[];
 }

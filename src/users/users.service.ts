@@ -137,10 +137,8 @@ export class UsersService {
 
   async updatePassword(id: string, newPassword: string): Promise<UpdateResult> {
     try {
-      // Encripta la nueva contraseña antes de guardarla
       const hashedPassword = await bcryptjs.hash(newPassword, 10);
 
-      // Actualiza la contraseña en la base de datos
       const result = await this.userRepository.update(id, {
         password: hashedPassword,
       });
