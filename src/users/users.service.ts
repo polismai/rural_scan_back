@@ -137,7 +137,10 @@ export class UsersService {
     try {
       const user: UpdateResult = await this.userRepository.update(
         id,
-        updateUserDto,
+        {
+          ...updateUserDto,
+          username: updateUserDto.username.toLowerCase()
+        }
       );
       if (user.affected === 0) {
         throw new ErrorManager({
