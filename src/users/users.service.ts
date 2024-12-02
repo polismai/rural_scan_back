@@ -22,9 +22,10 @@ export class UsersService {
     active,
   }: CreateUserDto): Promise<User> {
     try {
+      const user = username.toLowerCase();
       const userFound = await this.userRepository.findOne({
         where: {
-          username,
+          username: user,
           fieldId,
         },
       });
@@ -37,7 +38,7 @@ export class UsersService {
       }
 
       return await this.userRepository.save({
-        username,
+        username: user,
         password: await bcryptjs.hash(password, 10),
         fieldId,
         role,
@@ -50,11 +51,11 @@ export class UsersService {
 
   async findOneByUsername(username: string) {
     try {
-      const user: User = await this.userRepository.findOneBy({ username });
+      const user: User = await this.userRepository.findOneBy({ username: username.toLowerCase() });
       if (!user) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: 'user not found',
+          message: 'Usuario no encontrado',
         });
       }
       return user;
@@ -66,9 +67,24 @@ export class UsersService {
   async findByUsernameWithPassword(username: string) {
     try {
       const user: User = await this.userRepository.findOne({
-        where: { username },
-        select: ['id', 'username', 'password', 'role', 'fieldId'],
+        where: { username: username.toLowerCase() },
+        select: ['id', 'username', 'password', 'role', 'fieldId', 'active'],
       });
+      
+      if (!user) {
+        throw new ErrorManager({
+          type: 'NOT_FOUND',
+          message: 'Usuario no encontrado',
+        });
+      }
+
+      if (!user.active) {
+        throw new ErrorManager({
+          type: 'BAD_REQUEST',
+          message: 'El usuario está inactivo y no puede iniciar sesión',
+        });
+      }
+
       return user;
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
@@ -89,7 +105,7 @@ export class UsersService {
       if (users.length === 0) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: 'users not found',
+          message: 'Usuarios no encontrados',
         });
       }
       return users;
@@ -106,7 +122,7 @@ export class UsersService {
       } else {
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: 'user not found',
+          message: 'Usuario no encontrado',
         });
       }
     } catch (error) {
@@ -126,7 +142,7 @@ export class UsersService {
       if (user.affected === 0) {
         throw new ErrorManager({
           type: 'BAD_REQUEST',
-          message: 'el usuario no se pudo actualizar',
+          message: 'El usuario no se pudo actualizar',
         });
       }
       return user;

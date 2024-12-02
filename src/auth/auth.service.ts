@@ -35,12 +35,11 @@ export class AuthService {
     }
 
     const isPasswordValid = await bcryptjs.compare(password, user.password);
-
     if (!isPasswordValid) {
       throw new UnauthorizedException('datos incorrectos');
     }
 
-    const { id, role, fieldId } = user;
+    const { id, role, fieldId, username: bdUsername } = user;
 
     const tokenOptions = rememberMe ? {} : { expiresIn: '30d' };
 
@@ -59,7 +58,7 @@ export class AuthService {
     return {
       token,
       role,
-      username,
+      username: bdUsername,
     };
   }
 
