@@ -95,7 +95,7 @@ export class FieldsService {
     try {
       const field: Field = await this.fieldRepository.findOne({
         where: { id },
-        relations: ['company'],
+        relations: ['company', 'potreros'],
       });
       if (!field) {
         throw new ErrorManager({

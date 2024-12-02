@@ -69,12 +69,11 @@ export class PotrerosController {
   }
 
   @Post()
-  @Auth([UserRole.ADMIN])
+  @Auth([UserRole.SUPERADMIN, UserRole.ADMIN])
   async createPotrero(
     @Body() createPotreroDto: CreatePotreroDto,
-    @FieldId() fieldId: string,
   ) {
-    return await this.potrerosService.create(createPotreroDto, fieldId);
+    return await this.potrerosService.create(createPotreroDto);
   }
 
   // @Patch(':id')

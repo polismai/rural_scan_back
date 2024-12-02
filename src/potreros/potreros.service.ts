@@ -18,11 +18,10 @@ export class PotrerosService {
 
   async create(
     createPotreroDto: CreatePotreroDto,
-    fieldId: string,
   ): Promise<Potrero> {
     try {
       const potreroFound = await this.potreroRepository.findOne({
-        where: { name: createPotreroDto.name, fieldId },
+        where: { name: createPotreroDto.name, fieldId: createPotreroDto.fieldId },
       });
 
       if (potreroFound) {
@@ -32,10 +31,9 @@ export class PotrerosService {
         });
       }
 
-      const potrero = this.potreroRepository.create({
-        ...createPotreroDto,
-        fieldId,
-      });
+      const potrero = this.potreroRepository.create(
+        createPotreroDto,
+      );
       return await this.potreroRepository.save(potrero);
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
@@ -57,13 +55,6 @@ export class PotrerosService {
         .groupBy('potrero.id');
 
       const result = await query.getRawAndEntities();
-
-      if (!result.entities.length) {
-        throw new ErrorManager({
-          type: 'NOT_FOUND',
-          message: 'potreros not found',
-        });
-      }
 
       return result.entities.map((potrero, index) => ({
         ...potrero,

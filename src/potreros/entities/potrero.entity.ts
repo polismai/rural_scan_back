@@ -22,20 +22,21 @@ export class Potrero {
   @Column()
   name: string;
 
-  @Column('float')
-  totalHectares: number;
+  @Column('float', { nullable: true })
+  totalHectares?: number;
 
-  @Column('float')
-  netHectares: number;
+  @Column('float', { nullable: true })
+  netHectares?: number;
 
   @Column({
     type: 'enum',
     enum: ForageStatus,
+    nullable: true,
   })
-  forageStatus: ForageStatus;
+  forageStatus?: ForageStatus;
 
   @Column({ nullable: true })
-  observations: string;
+  observations?: string;
 
   @CreateDateColumn({
     type: 'timestamp',
