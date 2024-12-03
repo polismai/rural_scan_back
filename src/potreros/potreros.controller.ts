@@ -7,7 +7,7 @@ import {
   Post,
   UseGuards,
   // Post,
-  // Patch,
+  Patch,
   // Delete,
 } from '@nestjs/common';
 import { PotrerosService } from './potreros.service';
@@ -18,14 +18,19 @@ import { AuthGuard } from '../auth/guard/auth.guard';
 import { FieldId } from '../auth/decorators/fieldId.decorator';
 import { Potrero } from './entities/potrero.entity';
 import { ApiTags } from '@nestjs/swagger';
-// import { CreatePotreroDto } from './dto/create-potrero.dto';
-// import { UpdatePotreroDto } from './dto/update-potrero.dto';
+import { UpdatePotreroDto } from './dto/update-potrero.dto';
+import { ForageStatus } from '../common/enums/forage.enum';
 
 @ApiTags('Potreros')
 @UseGuards(AuthGuard)
 @Controller('potrero')
 export class PotrerosController {
   constructor(private readonly potrerosService: PotrerosService) {}
+
+  @Get('forage')
+  getForageStatus() {
+    return Object.values(ForageStatus);
+  }
 
   @Get(':id/isEmpty')
   async isPotreroEmpty(
@@ -76,10 +81,13 @@ export class PotrerosController {
     return await this.potrerosService.create(createPotreroDto);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updatePotreroDto: UpdatePotreroDto) {
-  //   return this.potrerosService.update(+id, updatePotreroDto);
-  // }
+  @Patch(':id')
+  async updatePotrero(
+    @Param('id', ParseUUIDPipe) id: string, 
+    @Body() updatePotreroDto: UpdatePotreroDto
+  ) {
+    return await this.potrerosService.updatePotrero(id, updatePotreroDto);
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {

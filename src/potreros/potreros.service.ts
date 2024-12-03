@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePotreroDto } from './dto/create-potrero.dto';
-// import { UpdatePotreroDto } from './dto/update-potrero.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Potrero } from './entities/potrero.entity';
-import { IsNull, Not, Repository } from 'typeorm';
+import { IsNull, Not, Repository, UpdateResult } from 'typeorm';
 import { ErrorManager } from 'src/utils/error.manager';
 import { AnimalPotrero } from '../animal-potrero/entities/animal_potrero.entity';
+import { UpdatePotreroDto } from './dto/update-potrero.dto';
 
 @Injectable()
 export class PotrerosService {
@@ -166,9 +166,26 @@ export class PotrerosService {
     }
   }
 
-  // update(id: number, updatePotreroDto: UpdatePotreroDto) {
-  //   return `This action updates a #${id} potrero`;
-  // }
+  async updatePotrero(
+    id: string, 
+    updatePotreroDto: UpdatePotreroDto
+  ): Promise<UpdateResult>  {
+    try {
+      const potrero: UpdateResult = await this.potreroRepository.update(
+        id, 
+        updatePotreroDto
+      );
+      if (potrero.affected === 0) {
+        throw new ErrorManager({
+          type: 'BAD_REQUEST',
+          message: 'El potrero no se pudo actualizar',
+        });
+      }
+      return potrero;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
 
   // remove(id: number) {
   //   return `This action removes a #${id} potrero`;
